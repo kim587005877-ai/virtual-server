@@ -4,6 +4,8 @@ const T=process.env.GITHUB_TOKEN;
 const REPOS=(process.env.GITHUB_REPOS||"").split(",").map(s=>s.trim()).filter(r=>/^[\w.-]+\/[\w.-]+$/.test(r));
 exports.enabled=!!(T&&REPOS.length);
 exports.needsKey=false;
+// Danh sách máy chuẩn của Codespaces, dùng khi GitHub từ chối endpoint liệt kê loại máy (lỗi 403)
+const G=2**30,STD=[["basicLinux32gb",2,8,32],["standardLinux32gb",4,16,32],["premiumLinux",8,32,64],["largePremiumLinux",16,64,128]].map(([name,c,m,d])=>({name,cpus:c,memory_in_bytes:m*G,storage_in_bytes:d*G}));
 const GB=b=>Math.round((b||0)/2**30);
 async function gh(method,p,body){
   const r=await fetch("https://api.github.com"+p,{method,headers:{Authorization:"Bearer "+T,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28","User-Agent":"virtual-server","Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});
@@ -21,7 +23,7 @@ async function mine(id){
   return c;
 }
 exports.options=async()=>{
-  const per=await Promise.all(REPOS.map(async r=>({r,m:(await gh("GET","/repos/"+r+"/codespaces/machines")).machines||[]})));
+  const per=await Promise.all(REPOS.map(async r=>({r,m:await gh("GET","/repos/"+r+"/codespaces/machines").then(d=>d.machines||[]).catch(e=>e.status===403?STD:Promise.reject(e))})));
   const plans={};
   for(const {r,m} of per)for(const x of m)(plans[x.name]??={name:x.name,cores:x.cpus,memory:GB(x.memory_in_bytes),disk:GB(x.storage_in_bytes),price:[]}).price.push({location:r,monthly:null});
   return{plans:Object.values(plans),locations:REPOS.map(r=>({name:r,label:r})),images:[{name:"default",label:"devcontainer mặc định"}]};
@@ -30,7 +32,14 @@ exports.count=async()=>(await gh("GET","/user/codespaces?per_page=100")).codespa
 exports.create=async p=>{
   if(!REPOS.includes(p.location))throw fail("Repo không nằm trong GITHUB_REPOS");
   if(p.name.length>40)throw fail("Tên tối đa 40 ký tự với Codespace");
-  return{server:map(await gh("POST","/repos/"+p.location+"/codespaces",{machine:p.plan,display_name:"vs-"+p.name,idle_timeout_minutes:30,retention_period_minutes:1440}))};
+  const body={machine:p.plan,display_name:"vs-"+p.name,idle_timeout_minutes:30,retention_period_minutes:1440};
+  try{return{server:map(await gh("POST","/repos/"+p.location+"/codespaces",body))}}
+  catch(e){
+    if(e.status!==403)throw e;
+    // Dự phòng: tạo qua endpoint của người dùng với repository_id
+    const id=(await gh("GET","/repos/"+p.location)).id;
+    return{server:map(await gh("POST","/user/codespaces",{...body,repository_id:id}))};
+  }
 };
 exports.get=async id=>map(await mine(id));
 exports.stop=async id=>{await mine(id);await gh("POST","/user/codespaces/"+id+"/stop")};
