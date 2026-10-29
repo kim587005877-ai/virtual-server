@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Máy chủ Linux ảo</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f4f5f7;--card:#fff;--tx:#1c2430;--mu:#667085;--bd:#dde1e7;--ac:#2563eb;--ok:#16a34a;--er:#dc2626;--term:#0f1720;--termtx:#b7f7c8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0e1116;--card:#171b22;--tx:#e6e9ee;--mu:#8b94a3;--bd:#2a313c;--ac:#5b8cff;--term:#07090c}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0e1116;--card:#171b22;--tx:#e6e9ee;--mu:#8b94a3;--bd:#2a313c;--ac:#5b8cff;--term:#07090c}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:0}.sub{color:var(--mu);font-size:13px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ok);margin-right:6px}
+.dot.off{background:var(--er)}
+nav{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px}
+nav button,.btn{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 13px;border-radius:8px;font:inherit;cursor:pointer;white-space:nowrap}
+nav button.on,.btn.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{font-size:15px;margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.bar{height:8px;background:var(--bd);border-radius:5px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--ac);transition:width .6s}
+.big{font-size:22px;font-weight:600}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left}
+th{color:var(--mu);font-weight:500}
+input,select,textarea{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:6px 8px;max-width:100%}
+td input{width:100%;min-width:130px}
+textarea{width:100%;height:220px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#term{background:var(--term);color:var(--termtx);font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;border-radius:10px;padding:12px;height:360px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+#term .in{display:flex;gap:6px}#term input{flex:1;background:transparent;border:0;color:inherit;outline:0;padding:0;font:inherit}
+.m{font-weight:600;padding:1px 7px;border-radius:5px;font-size:12px;color:#fff}
+.GET{background:#2563eb}.POST{background:#16a34a}.PUT{background:#d97706}.DELETE{background:#dc2626}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div><h1>Máy chủ Linux ảo</h1><div class="sub"><span class="dot" id="dot"></span><span id="hs"></span></div></div>
+ <div class="row"><button class="btn" onclick="act('reboot')">Khởi động lại</button><button class="btn" onclick="act('toggle')" id="tg">Tắt</button></div>
+</header>
+<nav id="nav">
+ <button data-t="ov" class="on">Tổng quan</button><button data-t="tm">Terminal</button><button data-t="db">Cơ sở dữ liệu</button><button data-t="rt">Thuê cloud</button><button data-t="lg">Nhật ký client <span id="cnt">(0)</span></button>
+</nav>
+
+<section id="ov">
+ <div class="card"><h2>Tài nguyên (theo gói cloud đã thuê)</h2>
+  <div class="grid">
+   <div>CPU <span class="big" id="cpuV"></span><div class="bar"><i id="cpuB"></i></div><div class="sub" id="cpuS"></div></div>
+   <div>RAM <span class="big" id="ramV"></span><div class="bar"><i id="ramB"></i></div><div class="sub" id="ramS"></div></div>
+   <div>Ổ đĩa <span class="big" id="dskV"></span><div class="bar"><i id="dskB"></i></div><div class="sub" id="dskS"></div></div>
+  </div></div>
+ <div class="card"><h2>Thông số cloud và cấu hình</h2><div class="tw"><table id="sum"></table></div></div>
+</section>
+
+<section id="tm" class="hide">
+ <div class="card"><h2>Terminal</h2>
+  <div id="term"><div id="out"></div><div class="in"><span id="ps"></span><input id="cmd" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lệnh"></div></div>
+  <div class="sub" style="margin-top:8px">Gõ <code>help</code> để xem lệnh. Lệnh đọc và ghi trực tiếp vào cơ sở dữ liệu.</div></div>
+</section>
+
+<section id="db" class="hide">
+ <div class="card"><h2>Bảng cloud (thông số khi thuê)</h2><div class="tw"><table id="t_cloud"></table></div></div>
+ <div class="card"><h2>Bảng config (cấu hình Linux)</h2><div class="tw"><table id="t_config"></table></div></div>
+ <div class="card"><h2>Thêm thông số</h2>
+  <div class="row"><select id="ac"><option>cloud</option><option>config</option></select><input id="ak" placeholder="khóa"><input id="av" placeholder="giá trị"><button class="btn pri" onclick="addRow()">Thêm (POST)</button></div></div>
+ <div class="card"><h2>JSON toàn bộ</h2><textarea id="js" spellcheck="false"></textarea>
+  <div class="row" style="margin-top:8px"><button class="btn pri" onclick="applyJSON()">Áp dụng</button><button class="btn" onclick="dl()">Tải xuống</button><button class="btn" onclick="resetDB()">Đặt lại mặc định</button></div></div>
+</section>
+
+<section id="rt" class="hide">
+ <div class="card"><h2>Kết nối backend</h2>
+  <div class="row"><input id="bu" placeholder="URL backend (trống nếu cùng máy chủ)" style="flex:1;min-width:200px"><input id="bp" type="password" placeholder="Mật khẩu ứng dụng" autocomplete="off"><label><input type="checkbox" id="demo"> Chế độ thử (mô phỏng, không tốn tiền)</label><button class="btn" onclick="loadOpt()">Tải tùy chọn</button></div></div>
+ <div class="card"><h2>Thuê máy chủ</h2>
+  <div class="row"><select id="rv" aria-label="Nhà cung cấp"><option value="hetzner">Hetzner</option><option value="aws">AWS</option><option value="gcp">Google Cloud</option></select><select id="rl" aria-label="Vùng"></select><select id="rp" aria-label="Gói"></select><select id="ri" aria-label="Hệ điều hành"></select><input id="rn" value="vps-01" placeholder="tên máy chủ"></div>
+  <p id="rprice" class="sub"></p>
+  <textarea id="rk" style="height:70px;margin-bottom:8px" placeholder="Khóa công khai SSH (ssh-ed25519 AAAA... hoặc ssh-rsa ...). Tạo bằng lệnh: ssh-keygen -t ed25519"></textarea>
+  <div class="row"><button class="btn pri" onclick="rent()">Thuê máy chủ</button><button class="btn" onclick="destroy()">Xóa máy chủ đang thuê</button></div>
+  <p id="rmsg" class="sub"></p></div>
+</section>
+
+<section id="lg" class="hide">
+ <div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Phương thức và thông số từ client</h2><button class="btn" onclick="LOG.length=0;rlog()">Xóa log</button></div>
+  <div class="tw"><table id="log"></table></div></div>
+</section>
+</div>
+
+<script>
+const DEF={cloud:{provider:"Hetzner Cloud",region:"Frankfurt (eu-central)",plan:"CPX31",vcpu:4,ram_gb:8,disk_gb:160,bandwidth_tb:20,price_month:14.9,public_ip:"203.0.113.24"},
+config:{hostname:"vps-01",os:"Ubuntu 24.04 LTS",kernel:"6.8.0-45-generic",timezone:"Asia/Ho_Chi_Minh",ssh_port:22,firewall:"enabled",swap_gb:2,services:"nginx,sshd,cron"}};
+let DB,LOG=[],up=true,start=Date.now(),hist=[],$=s=>document.getElementById(s);
+const clone=o=>JSON.parse(JSON.stringify(o));
+try{DB=JSON.parse(localStorage.getItem("vsdb"))}catch(e){}
+if(!DB||!DB.cloud||!DB.config)DB=clone(DEF);
+function save(){try{localStorage.setItem("vsdb",JSON.stringify(DB))}catch(e){}}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function coerce(old,v){return typeof old==="number"&&v!==""&&!isNaN(v)?Number(v):v}
+
+/* Lớp API giả lập: mọi tương tác của client đi qua đây và được ghi log */
+function api(method,path,body,src){
+ const t0=performance.now(),p=path.split("/").filter(Boolean);let st=200,data=null;
+ const col=DB[p[0]],key=p[1];
+ if(!col)st=404;
+ else if(method==="GET")data=key===undefined?col:(key in col?{[key]:col[key]}:(st=404,null));
+ else if(method==="POST"){if(!key||(key in col))st=409;else{col[key]=body;data={[key]:body};st=201}}
+ else if(method==="PUT"){if(!(key in col))st=404;else{col[key]=coerce(col[key],body);data={[key]:col[key]}}}
+ else if(method==="DELETE"){if(!(key in col))st=404;else{delete col[key];data={deleted:key}}}
+ else st=405;
+ if(method!=="GET")save();
+ LOG.unshift({time:new Date().toLocaleTimeString("vi-VN"),method,path,body:body===undefined?"":body,st,ms:(performance.now()-t0).toFixed(1),src:src||"ui"});
+ if(LOG.length>200)LOG.pop();rlog();
+ return{status:st,data};
+}
+function rlog(){
+ $("cnt").textContent="("+LOG.length+")";
+ $("log").innerHTML="<tr><th>Giờ</th><th>Phương thức</th><th>Đường dẫn</th><th>Thông số</th><th>Mã</th><th>ms</th><th>Nguồn</th></tr>"+
+ LOG.map(l=>`<tr><td>${l.time}</td><td><span class="m ${l.method}">${l.method}</span></td><td><code>${esc(l.path)}</code></td><td><code>${esc(typeof l.body==="object"?JSON.stringify(l.body):l.body)}</code></td><td>${l.st}</td><td>${l.ms}</td><td>${l.src}</td></tr>`).join("");
+}
+function rdb(){
+ for(const c of ["cloud","config"])
+  $("t_"+c).innerHTML="<tr><th>Khóa</th><th>Giá trị</th><th></th></tr>"+Object.entries(DB[c]).map(([k,v])=>
+   `<tr><td><code>${esc(k)}</code></td><td><input value="${esc(v)}" onchange="api('PUT','/${c}/${esc(k)}',this.value,'db-editor');refresh()"></td><td><button class="btn" onclick="api('DELETE','/${c}/${esc(k)}',undefined,'db-editor');refresh()" aria-label="Xóa">✕</button></td></tr>`).join("");
+ $("js").value=JSON.stringify(DB,null,2);
+}
+function addRow(){const k=$("ak").value.trim();if(!k)return;const r=api("POST","/"+$("ac").value+"/"+k,$("av").value,"db-editor");if(r.status===409)alert("Khóa đã tồn tại");$("ak").value=$("av").value="";refresh()}
+function applyJSON(){try{const o=JSON.parse($("js").value);if(!o.cloud||!o.config)throw 0;DB=o;save();api("PUT","/db",{replaced:true},"json-editor");refresh()}catch(e){alert("JSON không hợp lệ (cần có cloud và config)")}}
+function resetDB(){if(confirm("Đặt lại cơ sở dữ liệu về mặc định?")){DB=clone(DEF);save();api("PUT","/db",{reset:true},"ui");refresh()}}
+function dl(){const a=document.createElement("a");a.href="data:application/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(DB,null,2));a.download="server-db.json";a.click()}
+
+function uptime(){const s=Math.floor((Date.now()-start)/1000);return Math.floor(s/3600)+"h "+Math.floor(s%3600/60)+"m "+s%60+"s"}
+function metrics(){
+ const c=DB.cloud,cpu=up?8+Math.random()*30:0,ram=up?35+Math.random()*10:0,dsk=up?31:0;
+ hist={cpu,ram,dsk};
+ const ramT=+c.ram_gb||1,dskT=+c.disk_gb||1;
+ $("cpuV").textContent=cpu.toFixed(0)+"%";$("cpuB").style.width=cpu+"%";$("cpuS").textContent=(c.vcpu||"?")+" vCPU";
+ $("ramV").textContent=ram.toFixed(0)+"%";$("ramB").style.width=ram+"%";$("ramS").textContent=(ramT*ram/100).toFixed(1)+" / "+ramT+" GB";
+ $("dskV").textContent=dsk+"%";$("dskB").style.width=dsk+"%";$("dskS").textContent=(dskT*dsk/100).toFixed(0)+" / "+dskT+" GB";
+ $("hs").textContent=(up?"Đang chạy · ":"Đã tắt · ")+DB.config.hostname+" · "+c.public_ip+(up?" · uptime "+uptime():"");
+ $("dot").className="dot"+(up?"":" off");$("tg").textContent=up?"Tắt":"Bật";
+}
+function sum(){
+ $("sum").innerHTML=["cloud","config"].map(c=>Object.entries(DB[c]).map(([k,v])=>`<tr><td style="color:var(--mu)">${c}.${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")).join("");
+ const ps=DB.config.hostname;$("ps").textContent="root@"+ps+":~# ";
+}
+function refresh(){rdb();sum();metrics()}
+function act(a){
+ if(a==="toggle"){up=!up;start=Date.now();api("POST","/power",up?"on":"off","ui");}
+ else{start=Date.now();api("POST","/power","reboot","ui");out("Đang khởi động lại...");}
+ metrics();
+}
+
+/* Terminal */
+const O=$("out"),T=$("term");let H=[],hi=0;
+function out(t){const d=document.createElement("div");d.textContent=t;O.appendChild(d);T.scrollTop=T.scrollHeight}
+const CMD={
+ help:()=>"Lệnh: help, whoami, hostname, uname -a, uptime, free -h, df -h, nproc, ip a, date, cat /etc/os-release, ps,\nconfig list | config get <khóa> | config set <khóa> <giá trị>\ncloud list | cloud get <khóa> | cloud set <khóa> <giá trị>\nclear, reboot, shutdown",
+ whoami:()=>"root",
+ hostname:()=>DB.config.hostname,
+ uname:a=>"Linux "+DB.config.hostname+" "+DB.config.kernel+" #45-Ubuntu SMP x86_64 GNU/Linux",
+ uptime:()=>" up "+uptime()+", 1 user, load average: "+(hist.cpu/100*DB.cloud.vcpu).toFixed(2),
+ nproc:()=>String(DB.cloud.vcpu),
+ date:()=>new Date().toString(),
+ free:()=>{const t=DB.cloud.ram_gb*1024,u=Math.round(t*hist.ram/100);return "              total   used   free\nMem:        "+t+"M  "+u+"M  "+(t-u)+"M\nSwap:       "+DB.config.swap_gb*1024+"M     0M  "+DB.config.swap_gb*1024+"M"},
+ df:()=>{const t=DB.cloud.disk_gb;return "Filesystem  Size  Used Avail Use% Mounted on\n/dev/sda1   "+t+"G  "+Math.round(t*.31)+"G  "+Math.round(t*.69)+"G  31% /"},
+ ip:()=>"2: eth0: <BROADCAST,MULTICAST,UP> mtu 1500\n    inet "+DB.cloud.public_ip+"/24 scope global eth0",
+ cat:a=>a[0]==="/etc/os-release"?'PRETTY_NAME="'+DB.config.os+'"\nNAME="Ubuntu"':"cat: "+(a[0]||"")+": No such file or directory",
+ ps:()=>"  PID CMD\n    1 systemd\n"+DB.config.services.split(",").map((s,i)=>String(100+i*37).padStart(5)+" "+s.trim()).join("\n"),
+ clear:()=>{O.innerHTML="";return null},
+ reboot:()=>{act("reboot");return null},
+ shutdown:()=>{up=false;api("POST","/power","off","terminal");metrics();return "Hệ thống đã tắt."}
+};
+function run(l){
+ const a=l.trim().split(/\s+/),c=a.shift();if(!c)return;
+ if(!up&&c!=="help"){out("Máy chủ đang tắt. Bật lại ở góc trên.");return}
+ let r;
+ if(c==="config"||c==="cloud"){
+  const [s,k,...v]=a;
+  if(s==="list")r=JSON.stringify(api("GET","/"+c,undefined,"terminal").data,null,2);
+  else if(s==="get"&&k){const x=api("GET","/"+c+"/"+k,undefined,"terminal");r=x.status===200?x.data[k]:"Không tìm thấy khóa"}
+  else if(s==="set"&&k&&v.length){const x=api(k in DB[c]?"PUT":"POST","/"+c+"/"+k,v.join(" "),"terminal");r="OK ("+x.status+")";refresh()}
+  else r="Cú pháp: "+c+" list | get <khóa> | set <khóa> <giá trị>";
+ }else if(CMD[c])r=CMD[c](a);else r=c+": command not found";
+ if(r!=null)out(String(r));
+}
+$("cmd").addEventListener("keydown",e=>{
+ if(e.key==="Enter"){const v=e.target.value;out($("ps").textContent+v);H.push(v);hi=H.length;e.target.value="";run(v)}
+ else if(e.key==="ArrowUp"&&hi>0){e.target.value=H[--hi];e.preventDefault()}
+ else if(e.key==="ArrowDown"){e.target.value=H[++hi]||"";}
+});
+T.addEventListener("click",()=>$("cmd").focus());
+
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll("#nav button").forEach(x=>x.classList.toggle("on",x===b));
+ for(const s of ["ov","tm","db","rt","lg"])$(s).classList.toggle("hide",s!==b.dataset.t);
+});
+/* Thuê cloud qua backend */
+let CFG={};try{CFG=JSON.parse(localStorage.getItem("vscfg"))||{}}catch(e){}
+$("bu").value=CFG.url||"";$("demo").checked=CFG.demo!==false;
+let OPT=null,DS=null;const msg=t=>$("rmsg").textContent=t;
+const DEMO={plans:[{name:"cx22",cores:2,memory:4,disk:40,price:[{location:"fsn1",monthly:"4.59"},{location:"hel1",monthly:"4.59"}]},{name:"cx32",cores:4,memory:8,disk:80,price:[{location:"fsn1",monthly:"7.59"},{location:"hel1",monthly:"7.59"}]}],locations:[{name:"fsn1",label:"Falkenstein, DE"},{name:"hel1",label:"Helsinki, FI"}],images:[{name:"ubuntu-24.04",label:"Ubuntu 24.04"},{name:"debian-12",label:"Debian 12"}]};
+function demoRes(m,p,b){
+ if(p.endsWith("/options"))return DEMO;
+ if(m==="POST"){const x=DEMO.plans.find(z=>z.name===b.plan)||DEMO.plans[0];DS={id:999,provider:"Demo ("+$("rv").value+")",provider_id:$("rv").value,ssh_user:"root",name:b.name,status:"running",ip:"198.51.100.7",plan:x.name,vcpu:x.cores,ram_gb:x.memory,disk_gb:x.disk,region:b.location,os:b.image,price:x.price[0].monthly};return{server:DS,root_password:""}}
+ if(m==="GET")return{server:DS};return{ok:true};
+}
+function pl(m,p,b,st,t0){LOG.unshift({time:new Date().toLocaleTimeString("vi-VN"),method:m,path:p,body:b?{...b,confirm:undefined}:"",st,ms:(performance.now()-t0).toFixed(1),src:"backend"});rlog()}
+async function be(m,p,b){
+ CFG={url:$("bu").value.trim().replace(/\/$/,""),demo:$("demo").checked};
+ try{localStorage.setItem("vscfg",JSON.stringify(CFG))}catch(e){}
+ const t0=performance.now();let st=200,d;
+ try{
+  if(CFG.demo){await new Promise(r=>setTimeout(r,500));d=demoRes(m,p,b)}
+  else{const r=await fetch(CFG.url+p,{method:m,headers:{"Content-Type":"application/json","x-app-password":$("bp").value},body:b?JSON.stringify(b):undefined});st=r.status;d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Lỗi "+r.status)}
+ }catch(e){pl(m,p,b,st===200?0:st,t0);throw e}
+ pl(m,p,b,st,t0);return d;
+}
+async function loadOpt(){msg("Đang tải...");try{OPT=await be("GET","/api/"+$("rv").value+"/options");
+ $("rl").innerHTML=OPT.locations.map(x=>`<option value="${esc(x.name)}">${esc(x.label)}</option>`).join("");
+ $("ri").innerHTML=OPT.images.map(x=>`<option value="${esc(x.name)}">${esc(x.label)}</option>`).join("");
+ fillPlans();msg("Đã tải tùy chọn.")}catch(e){msg("Lỗi: "+e.message)}}
+function fillPlans(){const l=$("rl").value;$("rp").innerHTML=OPT.plans.filter(p=>p.price.some(x=>x.location===l)).map(p=>`<option value="${esc(p.name)}">${esc(p.name)} · ${p.cores} vCPU · ${p.memory} GB · ${p.disk} GB</option>`).join("");showPrice()}
+function showPrice(){const p=OPT&&OPT.plans.find(x=>x.name===$("rp").value),c=p&&p.price.find(x=>x.location===$("rl").value);$("rprice").textContent=c?(c.monthly==null?"Giá: xem bảng giá của nhà cung cấp (API không cung cấp)":"Giá: "+(+c.monthly).toFixed(2)+" EUR/tháng (đã gồm thuế, tính theo giờ)"):""}
+$("rl").onchange=()=>OPT&&fillPlans();$("rp").onchange=showPrice;
+$("rv").onchange=()=>{OPT=null;$("rl").innerHTML=$("rp").innerHTML=$("ri").innerHTML="";$("rprice").textContent="";loadOpt()};
+function applyServer(s){Object.assign(DB.cloud,{provider:s.provider,provider_id:s.provider_id,server_id:s.id,region:s.region,plan:s.plan,vcpu:s.vcpu,ram_gb:s.ram_gb,disk_gb:s.disk_gb,price_month:s.price==null?"n/a":+s.price,public_ip:s.ip});Object.assign(DB.config,{hostname:s.name,os:s.os,ssh_user:s.ssh_user||"root"});up=true;start=Date.now();save();refresh()}
+async function rent(){
+ if(!OPT)return msg("Hãy tải tùy chọn trước.");
+ const b={name:$("rn").value.trim(),plan:$("rp").value,location:$("rl").value,image:$("ri").value,ssh_key:$("rk").value.trim()};
+ if(!/^(ssh-ed25519|ssh-rsa|ecdsa-sha2-nistp\d+) [A-Za-z0-9+\/=]{20,}/.test(b.ssh_key))return msg("Cần dán khóa công khai SSH hợp lệ.");if(!/^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$/.test(b.name))return msg("Tên chỉ gồm a-z, 0-9 và dấu gạch ngang.");
+ if(!confirm("Thuê "+b.plan+" tại "+b.location+"?\n"+$("rprice").textContent+($("demo").checked?"\n(Chế độ thử: không tốn tiền)":"\nBạn sẽ bị tính phí thật.")))return;
+ msg("Đang tạo máy chủ...");
+ try{const r=await be("POST","/api/"+$("rv").value+"/servers",{...b,confirm:true});let s=r.server;
+  for(let i=0;i<30&&s.status!=="running";i++){await new Promise(z=>setTimeout(z,4000));s=(await be("GET","/api/"+s.provider_id+"/servers/"+encodeURIComponent(s.id))).server}
+  applyServer(s);msg("Đã thuê xong: "+s.ip+(r.root_password?" · mật khẩu root (chỉ hiện một lần): "+r.root_password:""))}
+ catch(e){msg("Lỗi: "+e.message)}
+}
+async function destroy(){const id=DB.cloud.server_id;if(!id)return msg("Chưa có máy chủ nào được thuê.");
+ if(!confirm("Xóa vĩnh viễn máy chủ #"+id+"?"))return;
+ try{await be("DELETE","/api/"+(DB.cloud.provider_id||"hetzner")+"/servers/"+encodeURIComponent(id));delete DB.cloud.server_id;DB.cloud.public_ip="-";up=false;save();refresh();msg("Đã xóa máy chủ.")}catch(e){msg("Lỗi: "+e.message)}}
+
+api("GET","/cloud",undefined,"init");api("GET","/config",undefined,"init");
+out("Ubuntu server ảo sẵn sàng. Gõ help để bắt đầu.");
+refresh();rlog();setInterval(metrics,2000);
+</script>
+</body>
+</html>
