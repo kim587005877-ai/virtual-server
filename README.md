@@ -19,3 +19,8 @@ Kết nối: Hetzner `ssh root@IP`, AWS và GCP `ssh ubuntu@IP` (giao diện ghi
 Ứng dụng chỉ xem/xóa máy chủ do chính nó tạo (nhãn managed-by=virtual-server), và giới hạn MAX_SERVERS.
 Không commit .env hay gcp-key.json. Phải chạy sau HTTPS khi đưa lên mạng.
 Giá AWS/GCP không có qua API nên giao diện không hiển thị; hãy xem trang giá của nhà cung cấp.
+
+## SSH thật trong trình duyệt
+Tab "SSH thật": dán khóa riêng (private key), bấm Kết nối. Backend lấy IP từ API nhà cung cấp (không nhận IP từ trình duyệt)
+và chỉ cho vào máy do ứng dụng tạo. Khóa riêng không được lưu hay ghi log. Giới hạn 2 phiên cùng lúc, tự ngắt sau 15 phút không thao tác.
+Máy mới tạo cần 1-2 phút mới nhận khóa SSH.

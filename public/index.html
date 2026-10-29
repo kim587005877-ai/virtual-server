@@ -36,10 +36,12 @@ textarea{width:100%;height:220px;font-family:ui-monospace,Menlo,Consolas,monospa
 #term{background:var(--term);color:var(--termtx);font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;border-radius:10px;padding:12px;height:360px;overflow:auto;white-space:pre-wrap;word-break:break-word}
 #term .in{display:flex;gap:6px}#term input{flex:1;background:transparent;border:0;color:inherit;outline:0;padding:0;font:inherit}
 .m{font-weight:600;padding:1px 7px;border-radius:5px;font-size:12px;color:#fff}
-.GET{background:#2563eb}.POST{background:#16a34a}.PUT{background:#d97706}.DELETE{background:#dc2626}
+.GET{background:#2563eb}.POST{background:#16a34a}.PUT{background:#d97706}.DELETE{background:#dc2626}.WS{background:#7c3aed}
 code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
 .hide{display:none}
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.3.0/xterm.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.3.0/xterm.min.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -48,7 +50,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
  <div class="row"><button class="btn" onclick="act('reboot')">Khởi động lại</button><button class="btn" onclick="act('toggle')" id="tg">Tắt</button></div>
 </header>
 <nav id="nav">
- <button data-t="ov" class="on">Tổng quan</button><button data-t="tm">Terminal</button><button data-t="db">Cơ sở dữ liệu</button><button data-t="rt">Thuê cloud</button><button data-t="lg">Nhật ký client <span id="cnt">(0)</span></button>
+ <button data-t="ov" class="on">Tổng quan</button><button data-t="tm">Terminal</button><button data-t="ssh">SSH thật</button><button data-t="db">Cơ sở dữ liệu</button><button data-t="rt">Thuê cloud</button><button data-t="lg">Nhật ký client <span id="cnt">(0)</span></button>
 </nav>
 
 <section id="ov">
@@ -65,6 +67,16 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
  <div class="card"><h2>Terminal</h2>
   <div id="term"><div id="out"></div><div class="in"><span id="ps"></span><input id="cmd" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Lệnh"></div></div>
   <div class="sub" style="margin-top:8px">Gõ <code>help</code> để xem lệnh. Lệnh đọc và ghi trực tiếp vào cơ sở dữ liệu.</div></div>
+</section>
+
+<section id="ssh" class="hide">
+ <div class="card"><h2>SSH thật vào máy chủ đang thuê</h2>
+  <p class="sub">Khóa riêng chỉ nằm trong bộ nhớ trình duyệt và được gửi qua HTTPS tới backend để đăng nhập, không được lưu. Nên dùng một khóa riêng chỉ cho việc này. Cần nhập Mật khẩu ứng dụng ở tab Thuê cloud.</p>
+  <textarea id="sk" style="height:90px;margin-bottom:8px" placeholder="Dán khóa riêng (-----BEGIN OPENSSH PRIVATE KEY----- ...)" spellcheck="false" autocomplete="off"></textarea>
+  <div class="row"><input id="sp" type="password" placeholder="Passphrase (nếu có)" autocomplete="off"><button class="btn pri" onclick="sshConnect()">Kết nối</button><button class="btn" onclick="sshClose()">Ngắt</button></div>
+  <p id="sm" class="sub"></p>
+  <div id="tx" style="background:#07090c;border-radius:10px;padding:6px;overflow:hidden"></div>
+  <div class="row" style="margin-top:8px"><button class="btn" onclick="sendK('\x03')">Ctrl+C</button><button class="btn" onclick="sendK('\t')">Tab</button><button class="btn" onclick="sendK('\x1b')">Esc</button><button class="btn" onclick="sendK('\x1b[A')">↑</button><button class="btn" onclick="sendK('\x1b[B')">↓</button></div></div>
 </section>
 
 <section id="db" class="hide">
@@ -199,7 +211,7 @@ T.addEventListener("click",()=>$("cmd").focus());
 
 document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>{
  document.querySelectorAll("#nav button").forEach(x=>x.classList.toggle("on",x===b));
- for(const s of ["ov","tm","db","rt","lg"])$(s).classList.toggle("hide",s!==b.dataset.t);
+ for(const s of ["ov","tm","ssh","db","rt","lg"])$(s).classList.toggle("hide",s!==b.dataset.t);
 });
 /* Thuê cloud qua backend */
 let CFG={};try{CFG=JSON.parse(localStorage.getItem("vscfg"))||{}}catch(e){}
@@ -245,6 +257,28 @@ async function rent(){
 async function destroy(){const id=DB.cloud.server_id;if(!id)return msg("Chưa có máy chủ nào được thuê.");
  if(!confirm("Xóa vĩnh viễn máy chủ #"+id+"?"))return;
  try{await be("DELETE","/api/"+(DB.cloud.provider_id||"hetzner")+"/servers/"+encodeURIComponent(id));delete DB.cloud.server_id;DB.cloud.public_ip="-";up=false;save();refresh();msg("Đã xóa máy chủ.")}catch(e){msg("Lỗi: "+e.message)}}
+
+/* SSH thật qua WebSocket */
+let ws,term;const sshMsg=t=>$("sm").textContent=t;
+function sendK(s){if(ws&&ws.readyState===1)ws.send(JSON.stringify({type:"data",d:s}))}
+function sshClose(){if(ws){try{ws.close()}catch(e){}ws=null}if(term){term.dispose();term=null}}
+function sshConnect(){
+ if(!DB.cloud.server_id)return sshMsg("Chưa có máy chủ thật. Hãy thuê ở tab Thuê cloud.");
+ if($("demo").checked)return sshMsg("Đang ở chế độ thử. Bỏ chọn Chế độ thử ở tab Thuê cloud để dùng SSH thật.");
+ if(typeof Terminal==="undefined")return sshMsg("Không tải được xterm.js (cần mạng và trang không chặn cdnjs).");
+ if(!$("sk").value.includes("PRIVATE KEY"))return sshMsg("Dán khóa riêng (private key) vào ô trên.");
+ sshClose();$("tx").innerHTML="";sshMsg("Đang kết nối...");
+ term=new Terminal({cursorBlink:true,fontSize:13,rows:22,cols:Math.max(40,Math.floor($("tx").clientWidth/7.9)),theme:{background:"#07090c"}});
+ term.open($("tx"));
+ const u=new URL($("bu").value.trim()||location.origin);u.protocol=u.protocol==="https:"?"wss:":"ws:";u.pathname="/ws/ssh";
+ const t0=performance.now();ws=new WebSocket(u.href);const w=ws;
+ w.onopen=()=>{w.send(JSON.stringify({type:"connect",password:$("bp").value,provider:DB.cloud.provider_id,id:String(DB.cloud.server_id),privateKey:$("sk").value,passphrase:$("sp").value,cols:term.cols,rows:term.rows}));$("sp").value="";pl("WS","/ws/ssh",{provider:DB.cloud.provider_id,id:DB.cloud.server_id},101,t0)};
+ w.onmessage=e=>{let m;try{m=JSON.parse(e.data)}catch(x){return}
+  if(m.type==="data"&&term)term.write(m.d);else if(m.type==="status")sshMsg(m.m);else if(m.type==="error")sshMsg("Lỗi: "+m.m)};
+ w.onclose=()=>{if(ws===w)sshMsg($("sm").textContent.startsWith("Lỗi")?$("sm").textContent:"Đã ngắt kết nối.")};
+ w.onerror=()=>sshMsg("Lỗi: không kết nối được tới backend.");
+ term.onData(d=>sendK(d));term.focus();
+}
 
 api("GET","/cloud",undefined,"init");api("GET","/config",undefined,"init");
 out("Ubuntu server ảo sẵn sàng. Gõ help để bắt đầu.");

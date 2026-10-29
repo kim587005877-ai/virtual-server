@@ -31,4 +31,5 @@ app.post("/api/:p/servers",auth,use(async(m,q,s)=>{
 app.get("/api/:p/servers/:id",auth,use(async(m,q,s)=>{if(!ID.test(q.params.id))throw fail("ID không hợp lệ");s.json({server:await m.get(q.params.id)})}));
 app.delete("/api/:p/servers/:id",auth,use(async(m,q,s)=>{if(!ID.test(q.params.id))throw fail("ID không hợp lệ");await m.remove(q.params.id);s.json({ok:true})}));
 
-app.listen(PORT,()=>console.log("Chạy tại http://localhost:"+PORT,"· nhà cung cấp bật:",Object.keys(prov).filter(k=>prov[k].enabled).join(", ")||"(chưa có)"));
+const server=require("http").createServer(app);require("./ssh")(server,{prov,password:APP_PASSWORD});
+server.listen(PORT,()=>console.log("Chạy tại http://localhost:"+PORT,"· nhà cung cấp bật:",Object.keys(prov).filter(k=>prov[k].enabled).join(", ")||"(chưa có)"));
