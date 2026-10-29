@@ -2,7 +2,7 @@ const express=require("express"),path=require("path"),crypto=require("crypto");
 const {cleanKey,NAME,fail}=require("./providers/common");
 const {APP_PASSWORD,PORT=3000}=process.env,MAX=+process.env.MAX_SERVERS||3;
 if(!APP_PASSWORD){console.error("Thiếu APP_PASSWORD trong .env");process.exit(1)}
-const prov={hetzner:require("./providers/hetzner"),aws:require("./providers/aws"),gcp:require("./providers/gcp")};
+const prov={hetzner:require("./providers/hetzner"),aws:require("./providers/aws"),gcp:require("./providers/gcp"),github:require("./providers/github")};
 const app=express();app.use(express.json({limit:"20kb"}));
 app.use(express.static(path.join(__dirname,"public")));
 
@@ -23,13 +23,16 @@ app.get("/api/:p/options",auth,use(async(m,q,s)=>s.json(await m.options())));
 app.post("/api/:p/servers",auth,use(async(m,q,s)=>{
   const {name,plan,location,image,ssh_key,confirm}=q.body||{},key=cleanKey(ssh_key);
   if(confirm!==true)throw fail("Cần xác nhận thuê");
-  if(!key)throw fail("Khóa công khai SSH không hợp lệ");
-  if(!NAME.test(name||"")||![plan,location,image].every(v=>typeof v==="string"&&/^[\w.-]{1,64}$/.test(v)))throw fail("Thông số không hợp lệ");
+  if(m.needsKey!==false&&!key)throw fail("Khóa công khai SSH không hợp lệ");
+  if(!NAME.test(name||"")||![plan,location,image].every(v=>typeof v==="string"&&/^[\w.\/-]{1,100}$/.test(v)))throw fail("Thông số không hợp lệ");
   if(await m.count()>=MAX)throw fail("Đã đạt giới hạn "+MAX+" máy chủ",403);
   s.status(201).json(await m.create({name,plan,location,image,key}));
 }));
 app.get("/api/:p/servers/:id",auth,use(async(m,q,s)=>{if(!ID.test(q.params.id))throw fail("ID không hợp lệ");s.json({server:await m.get(q.params.id)})}));
 app.delete("/api/:p/servers/:id",auth,use(async(m,q,s)=>{if(!ID.test(q.params.id))throw fail("ID không hợp lệ");await m.remove(q.params.id);s.json({ok:true})}));
+
+app.get("/api/:p/activity",auth,use(async(m,q,s)=>{if(!m.activity)throw fail("Không hỗ trợ");s.json({events:await m.activity(String(q.query.repo||""))})}));
+app.post("/api/:p/servers/:id/stop",auth,use(async(m,q,s)=>{if(!m.stop)throw fail("Không hỗ trợ");if(!ID.test(q.params.id))throw fail("ID không hợp lệ");await m.stop(q.params.id);s.json({ok:true})}));
 
 const server=require("http").createServer(app);require("./ssh")(server,{prov,password:APP_PASSWORD});
 server.listen(PORT,()=>console.log("Chạy tại http://localhost:"+PORT,"· nhà cung cấp bật:",Object.keys(prov).filter(k=>prov[k].enabled).join(", ")||"(chưa có)"));

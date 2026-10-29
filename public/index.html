@@ -50,7 +50,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
  <div class="row"><button class="btn" onclick="act('reboot')">Khởi động lại</button><button class="btn" onclick="act('toggle')" id="tg">Tắt</button></div>
 </header>
 <nav id="nav">
- <button data-t="ov" class="on">Tổng quan</button><button data-t="tm">Terminal</button><button data-t="ssh">SSH thật</button><button data-t="db">Cơ sở dữ liệu</button><button data-t="rt">Thuê cloud</button><button data-t="lg">Nhật ký client <span id="cnt">(0)</span></button>
+ <button data-t="ov" class="on">Tổng quan</button><button data-t="tm">Terminal</button><button data-t="ssh">SSH thật</button><button data-t="db">Cơ sở dữ liệu</button><button data-t="rt">Thuê cloud</button><button data-t="act">Hoạt động</button><button data-t="api">API GitHub</button><button data-t="lg">Nhật ký client <span id="cnt">(0)</span></button>
 </nav>
 
 <section id="ov">
@@ -92,11 +92,24 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
  <div class="card"><h2>Kết nối backend</h2>
   <div class="row"><input id="bu" placeholder="URL backend (trống nếu cùng máy chủ)" style="flex:1;min-width:200px"><input id="bp" type="password" placeholder="Mật khẩu ứng dụng" autocomplete="off"><label><input type="checkbox" id="demo"> Chế độ thử (mô phỏng, không tốn tiền)</label><button class="btn" onclick="loadOpt()">Tải tùy chọn</button></div></div>
  <div class="card"><h2>Thuê máy chủ</h2>
-  <div class="row"><select id="rv" aria-label="Nhà cung cấp"><option value="hetzner">Hetzner</option><option value="aws">AWS</option><option value="gcp">Google Cloud</option></select><select id="rl" aria-label="Vùng"></select><select id="rp" aria-label="Gói"></select><select id="ri" aria-label="Hệ điều hành"></select><input id="rn" value="vps-01" placeholder="tên máy chủ"></div>
+  <div class="row"><select id="rv" aria-label="Nhà cung cấp"><option value="hetzner">Hetzner</option><option value="aws">AWS</option><option value="gcp">Google Cloud</option><option value="github">GitHub Codespaces</option></select><select id="rl" aria-label="Vùng"></select><select id="rp" aria-label="Gói"></select><select id="ri" aria-label="Hệ điều hành"></select><input id="rn" value="vps-01" placeholder="tên máy chủ"></div>
   <p id="rprice" class="sub"></p>
   <textarea id="rk" style="height:70px;margin-bottom:8px" placeholder="Khóa công khai SSH (ssh-ed25519 AAAA... hoặc ssh-rsa ...). Tạo bằng lệnh: ssh-keygen -t ed25519"></textarea>
-  <div class="row"><button class="btn pri" onclick="rent()">Thuê máy chủ</button><button class="btn" onclick="destroy()">Xóa máy chủ đang thuê</button></div>
+  <div class="row"><button class="btn pri" onclick="rent()">Thuê máy chủ</button><button class="btn" onclick="stopCs()">Dừng (Codespace)</button><button class="btn" onclick="destroy()">Xóa máy chủ đang thuê</button></div>
   <p id="rmsg" class="sub"></p></div>
+</section>
+
+<section id="act" class="hide">
+ <div class="card"><h2>Hoạt động Codespace và repo</h2>
+  <div class="row"><button class="btn pri" onclick="loadAct()">Làm mới</button><label><input type="checkbox" id="aut" onchange="autoAct()"> Tự làm mới mỗi 30 giây</label></div>
+  <div id="actCs" class="sub" style="margin:10px 0"></div>
+  <div class="tw"><table id="actT"></table></div>
+  <p class="sub">GitHub không phát trực tiếp nội dung terminal của Codespace. Nhật ký này gồm trạng thái Codespace và các sự kiện của repo (push, tạo nhánh...). Sự kiện có thể trễ vài chục giây đến vài phút. Cần nhập Mật khẩu ứng dụng ở tab Thuê cloud.</p></div>
+</section>
+<section id="api" class="hide">
+ <div class="card"><h2>Tham khảo API GitHub</h2>
+  <p class="sub">Header cần có: <code>Authorization: Bearer TOKEN</code>, <code>Accept: application/vnd.github+json</code>, <code>X-GitHub-Api-Version: 2022-11-28</code>. Token cổ điển cần quyền <code>codespace</code> cho nhóm Codespaces.</p>
+  <div class="tw"><table id="apit"></table></div></div>
 </section>
 
 <section id="lg" class="hide">
@@ -211,7 +224,7 @@ T.addEventListener("click",()=>$("cmd").focus());
 
 document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>{
  document.querySelectorAll("#nav button").forEach(x=>x.classList.toggle("on",x===b));
- for(const s of ["ov","tm","ssh","db","rt","lg"])$(s).classList.toggle("hide",s!==b.dataset.t);
+ for(const s of ["ov","tm","ssh","db","rt","act","api","lg"])$(s).classList.toggle("hide",s!==b.dataset.t);
 });
 /* Thuê cloud qua backend */
 let CFG={};try{CFG=JSON.parse(localStorage.getItem("vscfg"))||{}}catch(e){}
@@ -242,16 +255,16 @@ function fillPlans(){const l=$("rl").value;$("rp").innerHTML=OPT.plans.filter(p=
 function showPrice(){const p=OPT&&OPT.plans.find(x=>x.name===$("rp").value),c=p&&p.price.find(x=>x.location===$("rl").value);$("rprice").textContent=c?(c.monthly==null?"Giá: xem bảng giá của nhà cung cấp (API không cung cấp)":"Giá: "+(+c.monthly).toFixed(2)+" EUR/tháng (đã gồm thuế, tính theo giờ)"):""}
 $("rl").onchange=()=>OPT&&fillPlans();$("rp").onchange=showPrice;
 $("rv").onchange=()=>{OPT=null;$("rl").innerHTML=$("rp").innerHTML=$("ri").innerHTML="";$("rprice").textContent="";loadOpt()};
-function applyServer(s){Object.assign(DB.cloud,{provider:s.provider,provider_id:s.provider_id,server_id:s.id,region:s.region,plan:s.plan,vcpu:s.vcpu,ram_gb:s.ram_gb,disk_gb:s.disk_gb,price_month:s.price==null?"n/a":+s.price,public_ip:s.ip});Object.assign(DB.config,{hostname:s.name,os:s.os,ssh_user:s.ssh_user||"root"});up=true;start=Date.now();save();refresh()}
+function applyServer(s){Object.assign(DB.cloud,{provider:s.provider,provider_id:s.provider_id,server_id:s.id,region:s.region,plan:s.plan,vcpu:s.vcpu,ram_gb:s.ram_gb,disk_gb:s.disk_gb,price_month:s.price==null?"n/a":+s.price,public_ip:s.ip||"-",...(s.web_url?{web_url:s.web_url}:{})});Object.assign(DB.config,{hostname:s.name,os:s.os,ssh_user:s.ssh_user||"root"});up=true;start=Date.now();save();refresh()}
 async function rent(){
  if(!OPT)return msg("Hãy tải tùy chọn trước.");
  const b={name:$("rn").value.trim(),plan:$("rp").value,location:$("rl").value,image:$("ri").value,ssh_key:$("rk").value.trim()};
- if(!/^(ssh-ed25519|ssh-rsa|ecdsa-sha2-nistp\d+) [A-Za-z0-9+\/=]{20,}/.test(b.ssh_key))return msg("Cần dán khóa công khai SSH hợp lệ.");if(!/^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$/.test(b.name))return msg("Tên chỉ gồm a-z, 0-9 và dấu gạch ngang.");
+ if($("rv").value!=="github"&&!/^(ssh-ed25519|ssh-rsa|ecdsa-sha2-nistp\d+) [A-Za-z0-9+\/=]{20,}/.test(b.ssh_key))return msg("Cần dán khóa công khai SSH hợp lệ.");if(!/^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$/.test(b.name))return msg("Tên chỉ gồm a-z, 0-9 và dấu gạch ngang.");
  if(!confirm("Thuê "+b.plan+" tại "+b.location+"?\n"+$("rprice").textContent+($("demo").checked?"\n(Chế độ thử: không tốn tiền)":"\nBạn sẽ bị tính phí thật.")))return;
  msg("Đang tạo máy chủ...");
  try{const r=await be("POST","/api/"+$("rv").value+"/servers",{...b,confirm:true});let s=r.server;
   for(let i=0;i<30&&s.status!=="running";i++){await new Promise(z=>setTimeout(z,4000));s=(await be("GET","/api/"+s.provider_id+"/servers/"+encodeURIComponent(s.id))).server}
-  applyServer(s);msg("Đã thuê xong: "+s.ip+(r.root_password?" · mật khẩu root (chỉ hiện một lần): "+r.root_password:""))}
+  applyServer(s);msg("Đã thuê xong: "+(s.ip||s.web_url||"")+(r.root_password?" · mật khẩu root (chỉ hiện một lần): "+r.root_password:""))}
  catch(e){msg("Lỗi: "+e.message)}
 }
 async function destroy(){const id=DB.cloud.server_id;if(!id)return msg("Chưa có máy chủ nào được thuê.");
@@ -279,6 +292,27 @@ function sshConnect(){
  w.onerror=()=>sshMsg("Lỗi: không kết nối được tới backend.");
  term.onData(d=>sendK(d));term.focus();
 }
+
+/* GitHub: hoạt động và tham khảo API */
+let actTimer=null;
+function autoAct(){clearInterval(actTimer);if($("aut").checked){loadAct();actTimer=setInterval(loadAct,30000)}}
+async function loadAct(){
+ if(DB.cloud.provider_id!=="github"||!DB.cloud.server_id){$("actCs").textContent="Chưa có Codespace nào được thuê qua ứng dụng.";return}
+ try{
+  const s=(await be("GET","/api/github/servers/"+encodeURIComponent(DB.cloud.server_id))).server||{};
+  const link=/^https:\/\//.test(s.web_url||"")?` · <a href="${esc(s.web_url)}" target="_blank" rel="noopener">Mở Codespace</a>`:"";
+  $("actCs").innerHTML=`Trạng thái: <b>${esc(s.state||s.status||"?")}</b> · Dùng lần cuối: ${esc(s.last_used?new Date(s.last_used).toLocaleString("vi-VN"):"-")} · ${esc(s.plan||"")}${link}`;
+  const ev=(await be("GET","/api/github/activity?repo="+encodeURIComponent(DB.cloud.region))).events||[];
+  $("actT").innerHTML="<tr><th>Giờ</th><th>Người</th><th>Sự kiện</th></tr>"+(ev.map(e=>`<tr><td>${esc(new Date(e.time).toLocaleString("vi-VN"))}</td><td>${esc(e.actor)}</td><td>${esc(e.text)}</td></tr>`).join("")||"<tr><td colspan=3>Chưa có sự kiện.</td></tr>");
+ }catch(e){$("actCs").textContent="Lỗi: "+e.message}
+}
+async function stopCs(){
+ if(DB.cloud.provider_id!=="github"||!DB.cloud.server_id)return msg("Chỉ dùng cho Codespace đã thuê.");
+ if($("demo").checked)return msg("Chế độ thử: không có gì để dừng.");
+ try{await be("POST","/api/github/servers/"+encodeURIComponent(DB.cloud.server_id)+"/stop");msg("Đã gửi lệnh dừng Codespace.")}catch(e){msg("Lỗi: "+e.message)}
+}
+const GHAPI=[["GET","/user","Thông tin tài khoản đang đăng nhập"],["GET","/rate_limit","Xem giới hạn số lần gọi API"],["GET","/user/codespaces","Liệt kê Codespace của bạn"],["GET","/repos/{owner}/{repo}/codespaces/machines","Các loại máy có thể tạo cho repo"],["POST","/repos/{owner}/{repo}/codespaces","Tạo Codespace (machine, display_name, idle_timeout_minutes...)"],["GET","/user/codespaces/{name}","Chi tiết và trạng thái một Codespace"],["POST","/user/codespaces/{name}/start","Bật Codespace"],["POST","/user/codespaces/{name}/stop","Dừng Codespace"],["DELETE","/user/codespaces/{name}","Xóa Codespace"],["GET","/repos/{owner}/{repo}/events","Sự kiện gần đây của repo"],["GET","/repos/{owner}/{repo}/commits","Danh sách commit"],["GET","/repos/{owner}/{repo}/actions/runs","Các lần chạy GitHub Actions"],["GET","/repos/{owner}/{repo}/actions/runs/{id}/logs","Tải log của một lần chạy (tệp zip)"]];
+$("apit").innerHTML="<tr><th>Phương thức</th><th>Đường dẫn</th><th>Mô tả</th></tr>"+GHAPI.map(r=>`<tr><td><span class="m ${r[0]}">${r[0]}</span></td><td><code>${esc(r[1])}</code></td><td>${esc(r[2])}</td></tr>`).join("");
 
 api("GET","/cloud",undefined,"init");api("GET","/config",undefined,"init");
 out("Ubuntu server ảo sẵn sàng. Gõ help để bắt đầu.");

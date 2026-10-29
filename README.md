@@ -24,3 +24,9 @@ Giá AWS/GCP không có qua API nên giao diện không hiển thị; hãy xem t
 Tab "SSH thật": dán khóa riêng (private key), bấm Kết nối. Backend lấy IP từ API nhà cung cấp (không nhận IP từ trình duyệt)
 và chỉ cho vào máy do ứng dụng tạo. Khóa riêng không được lưu hay ghi log. Giới hạn 2 phiên cùng lúc, tự ngắt sau 15 phút không thao tác.
 Máy mới tạo cần 1-2 phút mới nhận khóa SSH.
+
+## GitHub Codespaces
+Tạo token cổ điển tại github.com/settings/tokens với quyền `codespace`, đặt GITHUB_TOKEN và GITHUB_REPOS trên Render.
+Codespace không có IP công khai nên tab SSH thật không dùng được; mở bằng liên kết web hoặc `gh codespace ssh`.
+Tab "Hoạt động" hiện trạng thái Codespace và sự kiện của repo; tab "API GitHub" là bảng tham khảo.
+Ứng dụng tạo Codespace với tên bắt đầu bằng vs-, tự dừng sau 30 phút không dùng, tự xóa sau 1 ngày; chỉ quản lý các Codespace như vậy.

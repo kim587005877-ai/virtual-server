@@ -38,6 +38,7 @@ module.exports=(server,{prov,password})=>{
         if(active>=MAX_SESSIONS)throw new Error("Quá nhiều phiên SSH đang mở");
         // IP lấy từ API nhà cung cấp, không nhận từ client: chống truy cập tới địa chỉ tùy ý
         const s=await p.get(String(m.id));
+        if(s.web_url)throw new Error("Codespace không hỗ trợ SSH trực tiếp. Dùng gh codespace ssh hoặc mở: "+s.web_url);
         if(s.status!=="running"||!s.ip)throw new Error("Máy chủ chưa sẵn sàng (đang khởi động?)");
         active++;counted=true;
         ssh=new Client();
