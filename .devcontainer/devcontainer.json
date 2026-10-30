@@ -1,0 +1,6 @@
+{
+  "name": "virtual-server",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": { "ghcr.io/devcontainers/features/node:1": {} },
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y gdb binutils file strace ltrace gcc ; sudo apt-get install -y radare2 || true"
+}

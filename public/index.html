@@ -72,6 +72,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
 <section id="ssh" class="hide">
  <div class="card"><h2>SSH thật vào máy chủ đang thuê</h2>
   <p class="sub">Khóa riêng chỉ nằm trong bộ nhớ trình duyệt và được gửi qua HTTPS tới backend để đăng nhập, không được lưu. Nên dùng một khóa riêng chỉ cho việc này. Cần nhập Mật khẩu ứng dụng ở tab Thuê cloud.</p>
+  <p class="sub">Với GitHub Codespaces không cần dán khóa riêng: backend dùng gh để tạo đường hầm (tính năng thử nghiệm, cần gh đã cài trên backend).</p>
   <textarea id="sk" style="height:90px;margin-bottom:8px" placeholder="Dán khóa riêng (-----BEGIN OPENSSH PRIVATE KEY----- ...)" spellcheck="false" autocomplete="off"></textarea>
   <div class="row"><input id="sp" type="password" placeholder="Passphrase (nếu có)" autocomplete="off"><button class="btn pri" onclick="sshConnect()">Kết nối</button><button class="btn" onclick="sshClose()">Ngắt</button></div>
   <p id="sm" class="sub"></p>
@@ -84,6 +85,10 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
  <div class="card"><h2>Bảng config (cấu hình Linux)</h2><div class="tw"><table id="t_config"></table></div></div>
  <div class="card"><h2>Thêm thông số</h2>
   <div class="row"><select id="ac"><option>cloud</option><option>config</option></select><input id="ak" placeholder="khóa"><input id="av" placeholder="giá trị"><button class="btn pri" onclick="addRow()">Thêm (POST)</button></div></div>
+ <div class="card"><h2>Đồng bộ với Neon (Postgres)</h2>
+  <p class="sub">Lưu cơ sở dữ liệu lên Neon để dùng chung nhiều thiết bị. Cần Mật khẩu ứng dụng ở tab Thuê cloud và bỏ tick Chế độ thử.</p>
+  <div class="row"><button class="btn" onclick="neonLoad()">Tải từ Neon</button><button class="btn pri" onclick="neonSave()">Lưu lên Neon</button><label><input type="checkbox" id="nau"> Tự lưu khi thay đổi</label></div>
+  <p id="nsm" class="sub"></p></div>
  <div class="card"><h2>JSON toàn bộ</h2><textarea id="js" spellcheck="false"></textarea>
   <div class="row" style="margin-top:8px"><button class="btn pri" onclick="applyJSON()">Áp dụng</button><button class="btn" onclick="dl()">Tải xuống</button><button class="btn" onclick="resetDB()">Đặt lại mặc định</button></div></div>
 </section>
@@ -103,7 +108,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
  <div class="card"><h2>Hoạt động Codespace và repo</h2>
   <div class="row"><button class="btn pri" onclick="loadAct()">Làm mới</button><label><input type="checkbox" id="aut" onchange="autoAct()"> Tự làm mới mỗi 30 giây</label></div>
   <div id="actCs" class="sub" style="margin:10px 0"></div>
-  <div class="tw"><table id="actT"></table></div>
+  <div id="ghCmd"></div><div class="tw"><table id="actT"></table></div>
   <p class="sub">GitHub không phát trực tiếp nội dung terminal của Codespace. Nhật ký này gồm trạng thái Codespace và các sự kiện của repo (push, tạo nhánh...). Sự kiện có thể trễ vài chục giây đến vài phút. Cần nhập Mật khẩu ứng dụng ở tab Thuê cloud.</p></div>
 </section>
 <section id="api" class="hide">
@@ -125,7 +130,7 @@ let DB,LOG=[],up=true,start=Date.now(),hist=[],$=s=>document.getElementById(s);
 const clone=o=>JSON.parse(JSON.stringify(o));
 try{DB=JSON.parse(localStorage.getItem("vsdb"))}catch(e){}
 if(!DB||!DB.cloud||!DB.config)DB=clone(DEF);
-function save(){try{localStorage.setItem("vsdb",JSON.stringify(DB))}catch(e){}}
+function save(){try{localStorage.setItem("vsdb",JSON.stringify(DB))}catch(e){}autoNeon()}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function coerce(old,v){return typeof old==="number"&&v!==""&&!isNaN(v)?Number(v):v}
 
@@ -279,7 +284,7 @@ function sshConnect(){
  if(!DB.cloud.server_id)return sshMsg("Chưa có máy chủ thật. Hãy thuê ở tab Thuê cloud.");
  if($("demo").checked)return sshMsg("Đang ở chế độ thử. Bỏ chọn Chế độ thử ở tab Thuê cloud để dùng SSH thật.");
  if(typeof Terminal==="undefined")return sshMsg("Không tải được xterm.js (cần mạng và trang không chặn cdnjs).");
- if(!$("sk").value.includes("PRIVATE KEY"))return sshMsg("Dán khóa riêng (private key) vào ô trên.");
+ if(DB.cloud.provider_id!=="github"&&!$("sk").value.includes("PRIVATE KEY"))return sshMsg("Dán khóa riêng (private key) vào ô trên.");
  sshClose();$("tx").innerHTML="";sshMsg("Đang kết nối...");
  term=new Terminal({cursorBlink:true,fontSize:13,rows:22,cols:Math.max(40,Math.floor($("tx").clientWidth/7.9)),theme:{background:"#07090c"}});
  term.open($("tx"));
@@ -294,15 +299,37 @@ function sshConnect(){
 }
 
 /* GitHub: hoạt động và tham khảo API */
+/* Đồng bộ Neon */
+var nT=null,nBusy=false;const nm=t=>$("nsm").textContent=t;
+function autoNeon(){if(nBusy||!$("nau")||!$("nau").checked||$("demo").checked||!$("bp").value)return;clearTimeout(nT);nT=setTimeout(neonSave,2000)}
+async function neonLoad(){
+ if($("demo").checked)return nm("Bỏ tick Chế độ thử ở tab Thuê cloud trước.");
+ nBusy=true;
+ try{const r=await be("GET","/api/db");
+  if(!r.data)nm("Neon chưa có dữ liệu. Hãy bấm Lưu lên Neon.");
+  else{DB=r.data;save();refresh();nm("Đã tải từ Neon ("+new Date(r.updated_at).toLocaleString("vi-VN")+")")}
+ }catch(e){nm("Lỗi: "+e.message)}
+ nBusy=false;
+}
+async function neonSave(){
+ if($("demo").checked)return nm("Bỏ tick Chế độ thử ở tab Thuê cloud trước.");
+ try{const r=await be("PUT","/api/db",DB);nm("Đã lưu lên Neon ("+new Date(r.updated_at).toLocaleString("vi-VN")+")")}catch(e){nm("Lỗi: "+e.message)}
+}
+
 let actTimer=null;
 function autoAct(){clearInterval(actTimer);if($("aut").checked){loadAct();actTimer=setInterval(loadAct,30000)}}
+function showCmd(id){
+ const n=String(id).replace(/[^\w-]/g,"");
+ const c=[["Đăng nhập gh trên máy của bạn (một lần)","gh auth login && gh auth refresh -h github.com -s codespace"],["Vào terminal của Codespace qua đường hầm của GitHub","gh codespace ssh -c "+n],["Chuyển tiếp cổng 3000 về máy bạn","gh codespace ports forward 3000:3000 -c "+n],["Sao chép file lên Codespace","gh codespace cp ./file.txt remote:/workspaces/ -c "+n]];
+ $("ghCmd").innerHTML="<h2 style='margin-top:12px'>Kết nối bằng terminal của bạn</h2>"+c.map(x=>`<div class="sub">${esc(x[0])}</div><code style="display:block;word-break:break-all;margin:2px 0 8px">${esc(x[1])}</code>`).join("");
+}
 async function loadAct(){
  if(DB.cloud.provider_id!=="github"||!DB.cloud.server_id){$("actCs").textContent="Chưa có Codespace nào được thuê qua ứng dụng.";return}
  try{
   const s=(await be("GET","/api/github/servers/"+encodeURIComponent(DB.cloud.server_id))).server||{};
   const link=/^https:\/\//.test(s.web_url||"")?` · <a href="${esc(s.web_url)}" target="_blank" rel="noopener">Mở Codespace</a>`:"";
   $("actCs").innerHTML=`Trạng thái: <b>${esc(s.state||s.status||"?")}</b> · Dùng lần cuối: ${esc(s.last_used?new Date(s.last_used).toLocaleString("vi-VN"):"-")} · ${esc(s.plan||"")}${link}`;
-  const ev=(await be("GET","/api/github/activity?repo="+encodeURIComponent(DB.cloud.region))).events||[];
+  showCmd(s.id);const ev=(await be("GET","/api/github/activity?repo="+encodeURIComponent(DB.cloud.region))).events||[];
   $("actT").innerHTML="<tr><th>Giờ</th><th>Người</th><th>Sự kiện</th></tr>"+(ev.map(e=>`<tr><td>${esc(new Date(e.time).toLocaleString("vi-VN"))}</td><td>${esc(e.actor)}</td><td>${esc(e.text)}</td></tr>`).join("")||"<tr><td colspan=3>Chưa có sự kiện.</td></tr>");
  }catch(e){$("actCs").textContent="Lỗi: "+e.message}
 }

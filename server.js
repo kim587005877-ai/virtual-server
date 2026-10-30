@@ -3,7 +3,7 @@ const {cleanKey,NAME,fail}=require("./providers/common");
 const {APP_PASSWORD,PORT=3000}=process.env,MAX=+process.env.MAX_SERVERS||3;
 if(!APP_PASSWORD){console.error("Thiếu APP_PASSWORD trong .env");process.exit(1)}
 const prov={hetzner:require("./providers/hetzner"),aws:require("./providers/aws"),gcp:require("./providers/gcp"),github:require("./providers/github")};
-const app=express();app.use(express.json({limit:"20kb"}));
+const app=express();app.use(express.json({limit:"200kb"}));
 app.use(express.static(path.join(__dirname,"public")));
 
 // Chỉ người biết mật khẩu mới được thuê/xóa (tránh người lạ tiêu tiền của bạn)
@@ -30,6 +30,39 @@ app.post("/api/:p/servers",auth,use(async(m,q,s)=>{
 }));
 app.get("/api/:p/servers/:id",auth,use(async(m,q,s)=>{if(!ID.test(q.params.id))throw fail("ID không hợp lệ");s.json({server:await m.get(q.params.id)})}));
 app.delete("/api/:p/servers/:id",auth,use(async(m,q,s)=>{if(!ID.test(q.params.id))throw fail("ID không hợp lệ");await m.remove(q.params.id);s.json({ok:true})}));
+
+// Neon (Postgres): lưu cơ sở dữ liệu cloud/config dùng chung nhiều thiết bị
+let pool=null;
+if(process.env.DATABASE_URL){
+  const {Pool}=require("pg");
+  pool=new Pool({connectionString:process.env.DATABASE_URL,max:3,idleTimeoutMillis:10000,connectionTimeoutMillis:15000});
+  pool.query("CREATE TABLE IF NOT EXISTS app_state(id text PRIMARY KEY, data jsonb NOT NULL, updated_at timestamptz NOT NULL DEFAULT now())").catch(e=>console.error("Neon:",e.message));
+}
+function cleanDb(d){
+  if(!d||typeof d!=="object")throw fail("Dữ liệu không hợp lệ");
+  const out={};
+  for(const c of ["cloud","config"]){
+    const o=d[c];if(!o||typeof o!=="object"||Array.isArray(o))throw fail("Thiếu bảng "+c);
+    const e=Object.entries(o);if(e.length>200)throw fail("Quá nhiều khóa trong "+c);
+    out[c]={};
+    for(const [k,v] of e){
+      if(k==="__proto__"||!/^[\w.-]{1,64}$/.test(k)||!["string","number","boolean"].includes(typeof v)||String(v).length>2000)throw fail("Khóa hoặc giá trị không hợp lệ: "+k);
+      out[c][k]=v;
+    }
+  }
+  return out;
+}
+const needDb=(q,s,n)=>pool?n():s.status(400).json({error:"Chưa cấu hình DATABASE_URL (Neon) trên Render"});
+const ah=h=>(q,s)=>h(q,s).catch(e=>{console.error("neon",e.message);s.status(+e.status||500).json({error:e.message})});
+app.get("/api/db",auth,needDb,ah(async(q,s)=>{
+  const r=await pool.query("SELECT data,updated_at FROM app_state WHERE id='main'");
+  s.json({data:r.rows[0]?.data||null,updated_at:r.rows[0]?.updated_at||null});
+}));
+app.put("/api/db",auth,needDb,ah(async(q,s)=>{
+  const data=cleanDb(q.body);
+  const r=await pool.query("INSERT INTO app_state(id,data) VALUES('main',$1::jsonb) ON CONFLICT (id) DO UPDATE SET data=EXCLUDED.data, updated_at=now() RETURNING updated_at",[JSON.stringify(data)]);
+  s.json({ok:true,updated_at:r.rows[0].updated_at});
+}));
 
 app.get("/api/:p/activity",auth,use(async(m,q,s)=>{if(!m.activity)throw fail("Không hỗ trợ");s.json({events:await m.activity(String(q.query.repo||""))})}));
 app.post("/api/:p/servers/:id/stop",auth,use(async(m,q,s)=>{if(!m.stop)throw fail("Không hỗ trợ");if(!ID.test(q.params.id))throw fail("ID không hợp lệ");await m.stop(q.params.id);s.json({ok:true})}));
