@@ -5,6 +5,8 @@ if(!APP_PASSWORD){console.error("Thiếu APP_PASSWORD trong .env");process.exit(
 const prov={hetzner:require("./providers/hetzner"),aws:require("./providers/aws"),gcp:require("./providers/gcp"),github:require("./providers/github")};
 const app=express();app.use(express.json({limit:"200kb"}));
 app.use(express.static(path.join(__dirname,"public")));
+// xterm.js phục vụ từ chính backend (không phụ thuộc CDN)
+app.use("/vendor/xterm",express.static(path.join(__dirname,"node_modules","xterm")));
 
 // Chỉ người biết mật khẩu mới được thuê/xóa (tránh người lạ tiêu tiền của bạn)
 function auth(req,res,next){
