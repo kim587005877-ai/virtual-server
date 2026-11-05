@@ -41,6 +41,8 @@ textarea{width:100%;height:220px;font-family:ui-monospace,Menlo,Consolas,monospa
 #tw.full #tx{flex:1;min-height:0;border-radius:0}
 #tw.full .row{order:-1;margin:6px 0}
 #tw.full #fx{display:inline-block!important}
+#tw.full #pb{order:-1}
+#tw.full #cb{order:-1}
 code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
 .hide{display:none}
 </style>
@@ -81,7 +83,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
   <div class="row"><input id="sp" type="password" placeholder="Passphrase (nếu có)" autocomplete="off"><button class="btn pri" onclick="sshConnect()">Kết nối</button><button class="btn" onclick="sshClose()">Ngắt</button><button class="btn" onclick="toggleFull()">Toàn màn hình</button></div>
   <p id="sm" class="sub"></p>
   <div id="tw"><div id="tx" style="background:#07090c;border-radius:10px;padding:6px;overflow:hidden"></div>
-  <div class="row" style="margin-top:8px"><button class="btn" onclick="sendK('\x03')">Ctrl+C</button><button class="btn" onclick="sendK('\t')">Tab</button><button class="btn" onclick="sendK('\x1b')">Esc</button><button class="btn" onclick="sendK('\x1b[A')">↑</button><button class="btn" onclick="sendK('\x1b[B')">↓</button><button class="btn" id="fx" onclick="toggleFull()" style="display:none">Thu nhỏ</button></div></div></div>
+  <div class="row" style="margin-top:8px"><button class="btn" onclick="sendK('\x03')">Ctrl+C</button><button class="btn" onclick="sendK('\t')">Tab</button><button class="btn" onclick="sendK('\x1b')">Esc</button><button class="btn" onclick="sendK('\x1b[A')">↑</button><button class="btn" onclick="sendK('\x1b[B')">↓</button><button class="btn" onclick="pasteK()">Dán</button><button class="btn" onclick="copyK()">Chép</button><button class="btn" id="fx" onclick="toggleFull()" style="display:none">Thu nhỏ</button></div><div id="pb" style="display:none"><textarea id="pt" placeholder="Dán nội dung vào đây rồi bấm Gửi" spellcheck="false" style="height:90px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="pasteSend()">Gửi</button><button class="btn" onclick="pasteClose()">Hủy</button></div></div><div id="cb" style="display:none"><textarea id="ct" readonly spellcheck="false" style="height:150px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="copyAll()">Sao chép tất cả</button><button class="btn" onclick="copyClose()">Đóng</button><span id="cs" class="sub"></span></div></div></div></div>
 </section>
 
 <section id="db" class="hide">
@@ -283,6 +285,30 @@ async function destroy(){const id=DB.cloud.server_id;if(!id)return msg("Chưa c�
 /* SSH thật qua WebSocket */
 let ws,term;const sshMsg=t=>$("sm").textContent=t;
 function sendK(s){if(ws&&ws.readyState===1)ws.send(JSON.stringify({type:"data",d:s}))}
+function termText(n){
+ const b=term.buffer.active,end=b.length,L=[];
+ for(let i=Math.max(0,end-n);i<end;i++){const l=b.getLine(i);if(l)L.push(l.translateToString(true))}
+ while(L.length&&!L[L.length-1].trim())L.pop();
+ return L.join("\n");
+}
+async function copyK(){
+ if(!term)return;
+ const sel=term.hasSelection()?term.getSelection():"";
+ if(sel){try{await navigator.clipboard.writeText(sel);sshMsg("Đã chép phần đã chọn.");return}catch(e){}}
+ $("ct").value=sel||termText(200);$("cs").textContent="";$("cb").style.display="block";setTimeout(fitBox,50);
+}
+async function copyAll(){
+ const t=$("ct"),cm=x=>$("cs").textContent=x;
+ try{await navigator.clipboard.writeText(t.value);cm("Đã sao chép.")}
+ catch(e){t.focus();t.select();let ok=false;try{ok=document.execCommand("copy")}catch(x){}cm(ok?"Đã sao chép.":"Chạm giữ trong ô rồi chọn Sao chép.")}
+}
+function copyClose(){$("cb").style.display="none";setTimeout(fitBox,50)}
+async function pasteK(){
+ try{const t=await navigator.clipboard.readText();if(t){sendK(t.replace(/\r?\n/g,"\r"));if(term)term.focus();return}}catch(e){}
+ $("pb").style.display="block";$("pt").value="";$("pt").focus();setTimeout(fitBox,50);
+}
+function pasteSend(){const t=$("pt").value;if(t)sendK(t.replace(/\r?\n/g,"\r"));pasteClose();if(term)term.focus()}
+function pasteClose(){$("pb").style.display="none";setTimeout(fitBox,50)}
 function sendJ(o){if(ws&&ws.readyState===1)ws.send(JSON.stringify(o))}
 function fitTerm(){
  if(!term)return;
