@@ -84,7 +84,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
   <div class="row"><input id="sp" type="password" placeholder="Passphrase (nếu có)" autocomplete="off"><button class="btn pri" onclick="sshConnect()">Kết nối</button><button class="btn" onclick="sshClose()">Ngắt</button><button class="btn" onclick="toggleFull()">Toàn màn hình</button></div>
   <p id="sm" class="sub"></p>
   <div id="tw"><div id="tx" style="background:#07090c;border-radius:10px;padding:6px;overflow:hidden"></div>
-  <div class="row" style="margin-top:8px"><button class="btn" onclick="sendK('\r')">Enter</button><button class="btn" onclick="sendK('\x03')">Ctrl+C</button><button class="btn" onclick="sendK('\x03\x15\x0c')">Xóa sạch</button><button class="btn" onclick="sendK('\t')">Tab</button><button class="btn" onclick="sendK('\x1b')">Esc</button><button class="btn" onclick="sendK('\x1b[A')">↑</button><button class="btn" onclick="sendK('\x1b[B')">↓</button><button class="btn" onclick="pasteK()">Dán</button><button class="btn" onclick="copyK()">Chép</button><button class="btn" onclick="lpToggle()">Lệnh</button><button class="btn" id="fx" onclick="toggleFull()" style="display:none">Thu nhỏ</button></div><div id="pb" style="display:none"><textarea id="pt" placeholder="Dán nội dung vào đây rồi bấm Gửi" spellcheck="false" style="height:90px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="pasteSend()">Gửi</button><button class="btn" onclick="pasteClose()">Hủy</button></div></div><div id="cb" style="display:none"><textarea id="ct" readonly spellcheck="false" style="height:150px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="copyAll()">Sao chép tất cả</button><button class="btn" onclick="copyClose()">Đóng</button><span id="cs" class="sub"></span></div></div><div id="lp" style="display:none;background:#07090c;border-radius:10px;padding:6px;margin-top:8px"><div class="row"><select id="lc2" onchange="renderLP()"></select><input id="lq2" placeholder="Tìm lệnh" oninput="renderLP()" style="flex:1;min-width:110px"><button class="btn" onclick="lpClose()">Đóng</button></div><div id="lb2" style="max-height:38vh;overflow:auto;margin-top:6px"></div></div></div></div>
+  <div class="row" style="margin-top:8px"><button class="btn" onclick="sendK('\r')">Enter</button><button class="btn" onclick="sendK('\x03')">Ctrl+C</button><button class="btn" onclick="sendK('\x03\x15\x0c')">Xóa sạch</button><button class="btn" onclick="sendK('\t')">Tab</button><button class="btn" onclick="sendK('\x1b')">Esc</button><button class="btn" onclick="sendK('\x1b[A')">↑</button><button class="btn" onclick="sendK('\x1b[B')">↓</button><button class="btn" onclick="pasteK()">Dán</button><button class="btn" onclick="copyK()">Chép</button><button class="btn" onclick="lpToggle()">Lệnh</button><button class="btn" id="fx" onclick="toggleFull()" style="display:none">Thu nhỏ</button></div><div id="pb" style="display:none"><textarea id="pt" placeholder="Dán nội dung vào đây rồi bấm Gửi" spellcheck="false" style="height:90px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="pasteSend()">Gửi</button><button class="btn" onclick="pasteClose()">Hủy</button></div></div><div id="cb" style="display:none"><textarea id="ct" readonly spellcheck="false" style="height:150px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="copyAll()">Sao chép tất cả</button><button class="btn" onclick="copyClose()">Đóng</button><span id="cs" class="sub"></span></div></div><div id="lp" style="display:none;background:#07090c;border-radius:10px;padding:6px;margin-top:8px;max-height:75vh;overflow-y:auto"><div class="row"><select id="lc2" onchange="renderLP()"></select><input id="lq2" placeholder="Tìm theo việc cần làm hoặc tên lệnh" oninput="renderLP()" style="flex:1;min-width:110px"></div><div id="lb2" style="max-height:22vh;overflow:auto;margin-top:6px"></div><div style="color:#8b94a3;font-size:12px;margin-top:8px">Command_text</div><code id="lv" style="display:block;color:#b7f7c8;word-break:break-all;min-height:20px">(chưa chọn lệnh)</code><textarea id="lt" wrap="off" spellcheck="false" oninput="lpPreview()" style="height:140px;margin-top:6px;white-space:pre;overflow:auto;font-size:12px"></textarea><div class="row" style="margin-top:6px"><button class="btn" onclick="lpPaste()">Dán</button><button class="btn" onclick="lpCopy()">Chép</button><button class="btn" onclick="lpClear()">Xóa</button><button class="btn pri" onclick="lpPush()">Push</button><button class="btn" onclick="lpClose()">Đóng</button></div><div id="ls2" style="color:#8b94a3;font-size:12px;margin-top:4px"></div></div></div></div>
 </section>
 
 <section id="db" class="hide">
@@ -126,7 +126,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
 
 <section id="learn" class="hide">
  <div class="card"><h2>Học gõ lệnh Linux</h2>
-  <p class="sub">Bấm Gửi vào terminal để điền sẵn lệnh vào cửa sổ SSH (chưa chạy). Bạn đọc lại, sửa phần tên-file hoặc tên-gói cho đúng rồi bấm Enter. Cần đang kết nối ở tab SSH thật.</p>
+  <p class="sub">Chỉ để xem. Chạm vào một lệnh để mở Command_text và Learn_text (cây kiến thức: công nghệ tạo ra lệnh, nhóm, lệnh, tùy chọn và đối số). Muốn sửa lệnh rồi đẩy vào terminal, dùng nút Lệnh trong tab SSH thật.</p>
   <input id="lq" placeholder="Tìm lệnh (ví dụ: xóa, git, ram)" oninput="renderLearn()" style="width:100%">
   <p id="lm" class="sub"></p><div id="lb"></div></div>
 </section>
@@ -293,11 +293,13 @@ async function destroy(){const id=DB.cloud.server_id;if(!id)return msg("Chưa c�
 /* SSH thật qua WebSocket */
 let ws,term;const sshMsg=t=>$("sm").textContent=t;
 function sendK(s){if(ws&&ws.readyState===1)ws.send(JSON.stringify({type:"data",d:s}));if(term)term.focus()}
+const SEP="──────── Learn_text ────────";
+function lcHay(i){const t=TK[baseCmd(LC[i][1])]||[];return (LC[i].join(" ")+" "+t[0]+" "+t[1]).toLowerCase()}
 function lpToggle(){
  const p=$("lp");
  if(p.style.display==="none"){
-  const s=$("lc2");
-  if(!s.options.length)s.innerHTML='<option value="">Tất cả nhóm</option>'+[...new Set(LC.map(x=>x[0]))].map(c=>`<option>${esc(c)}</option>`).join("");
+  const sel=$("lc2");
+  if(!sel.options.length)sel.innerHTML='<option value="">Tất cả nhóm</option>'+[...new Set(LC.map(x=>x[0]))].map(c=>`<option>${esc(c)}</option>`).join("");
   p.style.display="block";renderLP();
  }else{lpClose();return}
  setTimeout(fitBox,50);
@@ -306,15 +308,34 @@ function lpClose(){$("lp").style.display="none";setTimeout(fitBox,50);if(term)te
 function renderLP(){
  const q=$("lq2").value.trim().toLowerCase(),c=$("lc2").value;let h="";
  for(let i=0;i<LC.length;i++){
-  const [g,cmd,d]=LC[i];
-  if(c&&g!==c)continue;
-  if(q&&!(g+" "+cmd+" "+d).toLowerCase().includes(q))continue;
-  h+=`<div onclick="lpSend(${i})" style="padding:7px 4px;border-bottom:1px solid #2a313c;cursor:pointer"><code style="color:#b7f7c8;word-break:break-all">${esc(cmd)}</code><div style="color:#8b94a3;font-size:12px">${esc(d)}</div></div>`;
+  if(c&&LC[i][0]!==c)continue;
+  if(q&&!lcHay(i).includes(q))continue;
+  h+=`<div onclick="lpPick(${i})" style="padding:7px 4px;border-bottom:1px solid #2a313c;cursor:pointer"><code style="color:#b7f7c8;word-break:break-all">${esc(LC[i][1])}</code><div style="color:#8b94a3;font-size:12px">${esc(LC[i][2])}</div></div>`;
  }
  $("lb2").innerHTML=h||"<div style='color:#8b94a3;padding:8px'>Không có lệnh phù hợp.</div>";
- setTimeout(fitBox,50);
 }
-function lpSend(i){if(!ws||ws.readyState!==1)return;sendK(LC[i][1]);lpClose()}
+function cmdPart(){const v=$("lt").value,k=v.indexOf(SEP);return(k<0?v:v.slice(0,k)).replace(/\s+$/,"")}
+function lpPreview(){$("lv").textContent=cmdPart()||"(trống)"}
+function lpStat(t){$("ls2").textContent=t}
+function lpPick(i){$("lt").value=LC[i][1]+"\n"+SEP+"\n"+learnText(LC[i][1]);$("lt").scrollTop=0;lpPreview();lpStat("Sửa Command_text nếu cần rồi bấm Push.")}
+function lpPush(){
+ if(!ws||ws.readyState!==1)return lpStat("Chưa kết nối SSH.");
+ const v=$("lt").value,c=cmdPart();
+ if(!c)return lpStat("Command_text đang trống.");
+ if(v.indexOf(SEP)<0&&/[└├]─/.test(v))return lpStat("Dòng phân cách Learn_text đã bị sửa, không push để tránh gửi nhầm.");
+ sendK(c.replace(/\r?\n/g,"\r"));lpStat("Đã push vào terminal. Bấm Enter để chạy.");
+}
+function lpPaste(){
+ const el=$("lt"),ins=t=>{const a=el.selectionStart,b=el.selectionEnd;el.value=el.value.slice(0,a)+t+el.value.slice(b);el.selectionStart=el.selectionEnd=a+t.length;lpPreview()};
+ if(navigator.clipboard&&navigator.clipboard.readText)navigator.clipboard.readText().then(ins,()=>{el.focus();lpStat("Chạm giữ trong ô rồi chọn Dán.")});
+ else{el.focus();lpStat("Chạm giữ trong ô rồi chọn Dán.")}
+}
+function lpCopy(){
+ const el=$("lt"),sel=el.value.slice(el.selectionStart,el.selectionEnd),t=sel||cmdPart();
+ if(!t)return lpStat("Không có gì để chép.");
+ (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>lpStat(sel?"Đã chép phần đang chọn.":"Đã chép Command_text."),()=>lpStat("Không chép được, hãy chọn chữ rồi dùng Sao chép của điện thoại."));
+}
+function lpClear(){$("lt").value="";lpPreview();lpStat("")}
 function termText(n){
  const b=term.buffer.active,end=b.length,L=[];
  for(let i=Math.max(0,end-n);i<end;i++){const l=b.getLine(i);if(l)L.push(l.translateToString(true))}
@@ -418,25 +439,90 @@ const LC=[
 ["Phiên dài (tmux)","sudo apt install -y tmux","Cài tmux để giữ phiên khi mất kết nối"],["Phiên dài (tmux)","tmux new -s lamviec","Mở phiên tmux tên lamviec (thoát giữ phiên: Ctrl+B rồi D)"],["Phiên dài (tmux)","tmux ls","Xem các phiên tmux đang có"],["Phiên dài (tmux)","tmux attach -t lamviec","Quay lại phiên tmux đã mở"]
 ];
 const LK=[["Ctrl+C","Hủy lệnh đang chạy (dùng nút Ctrl+C)"],["Tab","Gợi ý và tự điền tên file hay lệnh (dùng nút Tab)"],["Mũi tên lên, xuống","Lấy lại lệnh đã gõ (dùng nút mũi tên)"],["Enter","Chạy lệnh đang gõ (dùng nút Enter)"]];
+// [công nghệ gốc, nhánh, mô tả lệnh]
+const TK={
+pwd:["GNU coreutils","Điều hướng","in thư mục hiện tại"],ls:["GNU coreutils","Điều hướng","liệt kê nội dung thư mục"],cd:["GNU Bash","Điều hướng","đổi thư mục (lệnh dựng sẵn của shell)"],
+mkdir:["GNU coreutils","Quản lý file","tạo thư mục"],touch:["GNU coreutils","Quản lý file","tạo file trống"],cp:["GNU coreutils","Quản lý file","sao chép file"],mv:["GNU coreutils","Quản lý file","đổi tên hoặc di chuyển file"],rm:["GNU coreutils","Quản lý file","xóa file (không khôi phục được)"],chmod:["GNU coreutils","Quyền file","đổi quyền truy cập file"],
+cat:["GNU coreutils","Xem nội dung","in nội dung file"],head:["GNU coreutils","Xem nội dung","xem phần đầu file"],tail:["GNU coreutils","Xem nội dung","xem phần cuối file"],wc:["GNU coreutils","Xem nội dung","đếm dòng, từ, ký tự"],sort:["GNU coreutils","Xem nội dung","sắp xếp các dòng"],less:["Dự án GNU (less)","Xem nội dung","xem file dài theo trang"],grep:["GNU grep","Xem nội dung","tìm chuỗi trong file"],nano:["GNU nano","Soạn thảo","soạn văn bản trong terminal"],
+whoami:["GNU coreutils","Thông tin hệ thống","hiện tên người dùng"],uname:["GNU coreutils","Thông tin hệ thống","hiện thông tin hệ điều hành"],df:["GNU coreutils","Thông tin hệ thống","xem dung lượng ổ đĩa"],du:["GNU coreutils","Thông tin hệ thống","xem dung lượng thư mục"],nproc:["GNU coreutils","Thông tin hệ thống","đếm số nhân CPU"],hostname:["Debian/Ubuntu (gói hostname)","Thông tin hệ thống","hiện tên máy"],
+free:["procps-ng","Theo dõi hệ thống","xem bộ nhớ RAM"],ps:["procps-ng","Theo dõi hệ thống","liệt kê tiến trình"],top:["procps-ng","Theo dõi hệ thống","theo dõi tài nguyên trực tiếp"],uptime:["procps-ng","Theo dõi hệ thống","máy đã chạy bao lâu"],lsblk:["util-linux","Thông tin hệ thống","liệt kê ổ đĩa"],
+clear:["ncurses (Dự án GNU)","Terminal","xóa màn hình"],history:["GNU Bash","Shell","xem lịch sử lệnh"],source:["GNU Bash","Shell","chạy file lệnh trong phiên hiện tại"],echo:["GNU Bash","Shell","in chữ hoặc giá trị biến"],read:["GNU Bash","Shell","đọc chữ người dùng nhập vào biến"],unset:["GNU Bash","Shell","xóa một biến"],export:["GNU Bash","Shell","đưa biến cho các chương trình con"],
+apt:["Debian (APT)","Cài đặt phần mềm","quản lý gói phần mềm"],ping:["iputils","Mạng","kiểm tra kết nối mạng"],curl:["curl (Daniel Stenberg)","Mạng","gửi yêu cầu HTTP"],ip:["iproute2","Mạng","xem cấu hình mạng"],ss:["iproute2","Mạng","xem các cổng đang mở"],
+git:["Git (Linus Torvalds)","Quản lý mã nguồn","quản lý phiên bản mã nguồn"],gh:["GitHub","Quản lý mã nguồn","dòng lệnh chính thức của GitHub"],
+python3:["Python (PSF)","Python","chạy chương trình Python"],pip:["Python (PSF)","Python","cài thư viện Python"],deactivate:["Python (PSF)","Python","tắt môi trường ảo"],node:["Node.js","JavaScript","chạy chương trình JavaScript"],npm:["Node.js","JavaScript","quản lý thư viện JavaScript"],
+gcc:["GNU Toolchain","Biên dịch","biên dịch chương trình C"],gdb:["GNU Toolchain","Gỡ lỗi","trình gỡ lỗi"],objdump:["GNU binutils","Phân tích file","xem mã assembly"],readelf:["GNU binutils","Phân tích file","đọc cấu trúc file ELF"],nm:["GNU binutils","Phân tích file","liệt kê hàm và biến"],strings:["GNU binutils","Phân tích file","tìm chuỗi chữ trong file"],file:["file (Ian Darwin)","Phân tích file","nhận diện loại file"],hexdump:["util-linux","Phân tích file","xem file dạng hex"],xxd:["Vim","Phân tích file","xem file dạng hex"],ldd:["GNU C Library (glibc)","Phân tích file","xem thư viện chương trình cần"],strace:["strace","Gỡ lỗi","theo dõi lời gọi hệ thống"],ltrace:["ltrace","Gỡ lỗi","theo dõi lời gọi thư viện"],
+ssh:["OpenSSH (OpenBSD)","SSH","đăng nhập máy khác"],scp:["OpenSSH (OpenBSD)","SSH","chép file qua SSH"],"ssh-keygen":["OpenSSH (OpenBSD)","SSH","tạo cặp khóa SSH"],rsync:["rsync (Andrew Tridgell)","Truyền file","đồng bộ file và thư mục"],
+systemctl:["systemd","Dịch vụ hệ thống","quản lý dịch vụ"],journalctl:["systemd","Dịch vụ hệ thống","xem nhật ký hệ thống"],reboot:["systemd","Dịch vụ hệ thống","khởi động lại máy"],ufw:["Ubuntu (Canonical)","Tường lửa","quản lý tường lửa"],
+aws:["Amazon Web Services","Cloud CLI","dòng lệnh AWS"],gcloud:["Google Cloud","Cloud CLI","dòng lệnh Google Cloud"],hcloud:["Hetzner Cloud","Cloud CLI","dòng lệnh Hetzner"],tmux:["tmux (Nicholas Marriott)","Phiên làm việc","giữ phiên khi mất kết nối"]
+};
+const VO={"ssh-keygen":["-t","-f"],ssh:["-i","-p"],head:["-n"],tail:["-n"],ping:["-c"],curl:["-u"],git:["-m"],journalctl:["-u","-n"],tmux:["-s","-t"],gcc:["-o"],gdb:["-ex"],aws:["--region","--instance-ids"],gcloud:["--zone"],read:["-p"],python3:["-m"],gh:["-c"]};
+// mô tả tùy chọn và đối số: khóa "lệnh token" hoặc "token"
+const OD={
+"-v":"hiện phiên bản","--version":"hiện phiên bản","-h":"kích thước dễ đọc (KB, MB, GB)","--help":"xem hướng dẫn",
+"ls -l":"dạng dài (quyền, chủ sở hữu, kích thước)","ls -a":"hiện cả file ẩn (tên bắt đầu bằng dấu chấm)","cd ..":"thư mục cha","cd ~":"thư mục chính của bạn","rm -r":"xóa cả thư mục (đệ quy)",
+"head -n":"số dòng đầu cần lấy","tail -n":"số dòng cuối cần lấy","tail -f":"theo dõi, hiện dòng mới liên tục","grep -n":"hiện số dòng của kết quả","wc -l":"đếm số dòng","du -s":"chỉ in tổng mỗi mục","sort -h":"so sánh số dễ đọc (K, M, G)",
+"ps aux":"a mọi người dùng, u kèm tên người dùng, x cả tiến trình không gắn terminal","apt update":"tải lại danh sách gói","apt install":"cài gói","apt upgrade":"nâng cấp các gói đã cài","-y":"tự trả lời yes khi hỏi xác nhận",
+"ping -c":"số gói tin gửi rồi dừng","ping example.com":"tên miền cần kiểm tra","curl -s":"chạy im lặng, không hiện thanh tiến trình","curl -I":"chỉ lấy tiêu đề phản hồi","curl -u":"tên:mật khẩu (hoặc token) để xác thực","ip a":"liệt kê địa chỉ (viết tắt của addr)",
+"git status":"xem file đã thay đổi","git add":"đưa thay đổi vào vùng chờ lưu","git -A":"mọi thay đổi","git commit":"lưu thay đổi thành một commit","git -m":"ghi chú của commit","git push":"đẩy commit lên GitHub","git pull":"kéo commit mới từ GitHub về","git log":"xem lịch sử commit","git --oneline":"mỗi commit một dòng","git remote":"xem kho từ xa","git -v":"hiện kèm địa chỉ","git branch":"xem các nhánh",
+"gh auth":"nhóm lệnh đăng nhập","gh status":"xem trạng thái đăng nhập","gh repo":"nhóm lệnh về repo","gh view":"xem thông tin","gh run":"nhóm lệnh GitHub Actions","gh list":"liệt kê","gh codespace":"nhóm lệnh Codespace","gh stop":"dừng","gh delete":"xóa (mất dữ liệu)","gh -c":"tên Codespace",
+"python3 -m":"chạy một module có sẵn của Python","pip install":"cài thư viện","npm install":"cài thư viện theo package.json","npm start":"chạy script start",
+"gcc -g":"kèm thông tin gỡ lỗi","gcc -o":"tên file chương trình đầu ra","readelf -h":"in tiêu đề ELF","objdump -d":"dịch mã máy ra assembly","hexdump -C":"hiện hex kèm ký tự","gdb -batch":"chạy tự động rồi thoát","gdb -ex":"chạy một lệnh gdb",
+"ssh-keygen -t":"loại khóa (ví dụ ed25519)","ssh-keygen -f":"file lưu khóa","ssh -i":"file khóa riêng dùng để đăng nhập","ssh -p":"cổng kết nối","rsync -a":"giữ thuộc tính, đi vào thư mục con","rsync -v":"hiện chi tiết","scp .":"thư mục hiện tại (nơi lưu file)","chmod 600":"chỉ chủ file được đọc và ghi",
+"tmux new":"tạo phiên mới","tmux -s":"tên phiên","tmux ls":"liệt kê phiên","tmux attach":"vào lại phiên","tmux -t":"phiên cần vào",
+"ss -t":"TCP","ss -u":"UDP","ss -l":"cổng đang lắng nghe","ss -p":"kèm tiến trình","ss -n":"hiện số cổng",
+"journalctl -u":"theo tên dịch vụ","journalctl -n":"số dòng cuối","journalctl --no-pager":"in thẳng, không phân trang","ufw status":"xem trạng thái tường lửa","ufw allow":"cho phép một cổng","ufw 22/tcp":"cổng 22, giao thức TCP","systemctl status":"xem dịch vụ có chạy không","systemctl restart":"khởi động lại dịch vụ",
+"aws ec2":"nhóm lệnh máy ảo EC2","aws describe-instances":"liệt kê máy","aws stop-instances":"dừng máy (giữ ổ đĩa)","aws terminate-instances":"xóa hẳn máy","aws --region":"vùng AWS","aws --instance-ids":"mã máy cần thao tác","gcloud compute":"nhóm lệnh Compute Engine","gcloud instances":"máy ảo","gcloud list":"liệt kê","gcloud stop":"dừng","gcloud --zone":"vùng Google Cloud","hcloud server":"nhóm lệnh máy chủ","hcloud list":"liệt kê",
+"read -s":"không hiện chữ gõ vào","read -p":"dòng nhắc hiển thị","history -c":"xóa lịch sử của phiên"
+};
+function tok(s){const o=[],re=/'[^']*'|"[^"]*"|\S+/g;let m;while((m=re.exec(s)))o.push(m[0]);return o}
+function baseCmd(c){const t=tok(c);let i=0;while(t[i]==="sudo")i++;return t[i]||""}
+function argDesc(a){
+ if(/[À-ỹ]/.test(a))return"phần bạn thay bằng giá trị thật";
+ if(/^https?:/.test(a))return"địa chỉ web";
+ if(/@/.test(a))return"người dùng@máy (có thể kèm :đường-dẫn)";
+ if(/^\$/.test(a))return"biến môi trường (giá trị có sẵn)";
+ if(/^[A-Z_]+$/.test(a))return"tên biến";
+ if(/^\d+$/.test(a))return"một con số";
+ if(a==="*")return"ký tự đại diện: mọi file trong thư mục";
+ if(/\//.test(a)||/^[~.]/.test(a))return"đường dẫn hoặc tên file";
+ return"giá trị bạn nhập";
+}
+function segTree(seg){
+ const t=tok(seg);if(!t.length)return"";
+ let i=0,sudo=false;while(t[i]==="sudo"){sudo=true;i++}
+ const cmd=t[i++]||"",info=TK[cmd]||["Linux","Công cụ dòng lệnh","(chưa có mô tả)"],kids=[];
+ if(sudo)kids.push(["sudo","tiền tố: chạy với quyền quản trị"]);
+ for(;i<t.length;i++){
+  let a=t[i],v=null;
+  if(a.startsWith("-")){
+   const eq=a.indexOf("=");
+   if(eq>0){v=a.slice(eq+1);a=a.slice(0,eq)}else if((VO[cmd]||[]).includes(a)&&i+1<t.length)v=t[++i];
+   let d=OD[cmd+" "+a]||OD[a];
+   if(!d&&/^-\d+$/.test(a))d="lấy "+a.slice(1)+" dòng (viết tắt của -n)";
+   if(!d&&v===null&&/^-[A-Za-z]{2,}$/.test(a)){for(const ch of a.slice(1))kids.push(["-"+ch+" (trong "+a+")","tùy chọn: "+(OD[cmd+" -"+ch]||OD["-"+ch]||"(chưa có giải thích)")]);continue}
+   kids.push([a+(v!==null?" "+v:""),"tùy chọn: "+(d||"(chưa có giải thích)")+(v!==null?" — giá trị: "+v:"")]);
+  }else{const d=OD[cmd+" "+a];kids.push([a,d?"giải thích: "+d:"đối số: "+argDesc(a)])}
+ }
+ const L=[info[0],"└─ "+info[1],"   └─ "+cmd+" — "+info[2]];
+ kids.forEach((k,j)=>L.push("      "+(j===kids.length-1?"└─ ":"├─ ")+k[0]+"   "+k[1]));
+ return L.join("\n");
+}
+function learnText(c){
+ const segs=c.split(/\s*(?:\|\||\||&&)\s*/).filter(Boolean);
+ const parts=segs.map((x,k)=>(segs.length>1?"Phần "+(k+1)+": "+x+"\n":"")+segTree(x));
+ const b=baseCmd(c),bi=TK[b]&&TK[b][0]==="GNU Bash";
+ return parts.join("\n\n")+(b?"\n\nTự tra cứu: "+(bi?"help "+b:b+" --help  hoặc  man "+b):"");
+}
 function renderLearn(){
  const q=$("lq").value.trim().toLowerCase();let cat="",h="";
  for(let i=0;i<LC.length;i++){
+  if(q&&!lcHay(i).includes(q))continue;
   const [c,cmd,d]=LC[i];
-  if(q&&!(c+" "+cmd+" "+d).toLowerCase().includes(q))continue;
   if(c!==cat){cat=c;h+=`<h2 style="margin:14px 0 6px">${esc(c)}</h2>`}
-  h+=`<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><code style="display:block;word-break:break-all">${esc(cmd)}</code><div class="sub">${esc(d)}</div><div class="row" style="margin-top:6px"><button class="btn" onclick="learnSend(${i})">Gửi vào terminal</button><button class="btn" onclick="learnCopy(${i})">Chép</button></div></div>`;
+  h+=`<details style="padding:6px 0;border-bottom:1px solid var(--bd)"><summary><code>${esc(cmd)}</code><span class="sub"> — ${esc(d)}</span></summary><div class="sub" style="margin-top:6px">Command_text</div><code style="display:block;word-break:break-all">${esc(cmd)}</code><div class="sub" style="margin-top:8px">Learn_text</div><pre style="overflow:auto;font-size:12px;margin:4px 0">${esc(learnText(cmd))}</pre></details>`;
  }
- if(!q){h+=`<h2 style="margin:14px 0 6px">Phím hay dùng</h2>`+LK.map(k=>`<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><code>${esc(k[0])}</code><div class="sub">${esc(k[1])}</div></div>`).join("")}
+ if(!q)h+=`<h2 style="margin:14px 0 6px">Phím hay dùng</h2>`+LK.map(k=>`<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><code>${esc(k[0])}</code><div class="sub">${esc(k[1])}</div></div>`).join("");
  $("lb").innerHTML=h||"<p class='sub'>Không có lệnh phù hợp.</p>";
-}
-function learnSend(i){
- if(!ws||ws.readyState!==1)return $("lm").textContent="Chưa kết nối SSH. Hãy kết nối ở tab SSH thật trước.";
- $("lm").textContent="";
- const b=document.querySelector('#nav button[data-t="ssh"]');if(b)b.click();
- sendK(LC[i][1]);
-}
-async function learnCopy(i){
- try{await navigator.clipboard.writeText(LC[i][1]);$("lm").textContent="Đã chép: "+LC[i][1]}catch(e){$("lm").textContent="Không chép được, hãy tự chạm giữ vào lệnh để chép."}
 }
 renderLearn();
 
