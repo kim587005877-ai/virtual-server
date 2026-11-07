@@ -56,7 +56,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
  <div class="row"><button class="btn" onclick="act('reboot')">Khởi động lại</button><button class="btn" onclick="act('toggle')" id="tg">Tắt</button></div>
 </header>
 <nav id="nav">
- <button data-t="ov" class="on">Tổng quan</button><button data-t="tm">Terminal</button><button data-t="ssh">SSH thật</button><button data-t="db">Cơ sở dữ liệu</button><button data-t="rt">Thuê cloud</button><button data-t="act">Hoạt động</button><button data-t="api">API GitHub</button><button data-t="lg">Nhật ký client <span id="cnt">(0)</span></button>
+ <button data-t="ov" class="on">Tổng quan</button><button data-t="tm">Terminal</button><button data-t="ssh">SSH thật</button><button data-t="db">Cơ sở dữ liệu</button><button data-t="rt">Thuê cloud</button><button data-t="act">Hoạt động</button><button data-t="api">API GitHub</button><button data-t="learn">Học lệnh</button><button data-t="lg">Nhật ký client <span id="cnt">(0)</span></button>
 </nav>
 
 <section id="ov">
@@ -83,7 +83,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
   <div class="row"><input id="sp" type="password" placeholder="Passphrase (nếu có)" autocomplete="off"><button class="btn pri" onclick="sshConnect()">Kết nối</button><button class="btn" onclick="sshClose()">Ngắt</button><button class="btn" onclick="toggleFull()">Toàn màn hình</button></div>
   <p id="sm" class="sub"></p>
   <div id="tw"><div id="tx" style="background:#07090c;border-radius:10px;padding:6px;overflow:hidden"></div>
-  <div class="row" style="margin-top:8px"><button class="btn" onclick="sendK('\x03')">Ctrl+C</button><button class="btn" onclick="sendK('\x03\x15\x0c')">Xóa sạch</button><button class="btn" onclick="sendK('\t')">Tab</button><button class="btn" onclick="sendK('\x1b')">Esc</button><button class="btn" onclick="sendK('\x1b[A')">↑</button><button class="btn" onclick="sendK('\x1b[B')">↓</button><button class="btn" onclick="pasteK()">Dán</button><button class="btn" onclick="copyK()">Chép</button><button class="btn" id="fx" onclick="toggleFull()" style="display:none">Thu nhỏ</button></div><div id="pb" style="display:none"><textarea id="pt" placeholder="Dán nội dung vào đây rồi bấm Gửi" spellcheck="false" style="height:90px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="pasteSend()">Gửi</button><button class="btn" onclick="pasteClose()">Hủy</button></div></div><div id="cb" style="display:none"><textarea id="ct" readonly spellcheck="false" style="height:150px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="copyAll()">Sao chép tất cả</button><button class="btn" onclick="copyClose()">Đóng</button><span id="cs" class="sub"></span></div></div></div></div>
+  <div class="row" style="margin-top:8px"><button class="btn" onclick="sendK('\r')">Enter</button><button class="btn" onclick="sendK('\x03')">Ctrl+C</button><button class="btn" onclick="sendK('\x03\x15\x0c')">Xóa sạch</button><button class="btn" onclick="sendK('\t')">Tab</button><button class="btn" onclick="sendK('\x1b')">Esc</button><button class="btn" onclick="sendK('\x1b[A')">↑</button><button class="btn" onclick="sendK('\x1b[B')">↓</button><button class="btn" onclick="pasteK()">Dán</button><button class="btn" onclick="copyK()">Chép</button><button class="btn" id="fx" onclick="toggleFull()" style="display:none">Thu nhỏ</button></div><div id="pb" style="display:none"><textarea id="pt" placeholder="Dán nội dung vào đây rồi bấm Gửi" spellcheck="false" style="height:90px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="pasteSend()">Gửi</button><button class="btn" onclick="pasteClose()">Hủy</button></div></div><div id="cb" style="display:none"><textarea id="ct" readonly spellcheck="false" style="height:150px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="copyAll()">Sao chép tất cả</button><button class="btn" onclick="copyClose()">Đóng</button><span id="cs" class="sub"></span></div></div></div></div>
 </section>
 
 <section id="db" class="hide">
@@ -121,6 +121,13 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
  <div class="card"><h2>Tham khảo API GitHub</h2>
   <p class="sub">Header cần có: <code>Authorization: Bearer TOKEN</code>, <code>Accept: application/vnd.github+json</code>, <code>X-GitHub-Api-Version: 2022-11-28</code>. Token cổ điển cần quyền <code>codespace</code> cho nhóm Codespaces.</p>
   <div class="tw"><table id="apit"></table></div></div>
+</section>
+
+<section id="learn" class="hide">
+ <div class="card"><h2>Học gõ lệnh Linux</h2>
+  <p class="sub">Bấm Gửi vào terminal để điền sẵn lệnh vào cửa sổ SSH (chưa chạy). Bạn đọc lại, sửa phần tên-file hoặc tên-gói cho đúng rồi bấm Enter. Cần đang kết nối ở tab SSH thật.</p>
+  <input id="lq" placeholder="Tìm lệnh (ví dụ: xóa, git, ram)" oninput="renderLearn()" style="width:100%">
+  <p id="lm" class="sub"></p><div id="lb"></div></div>
 </section>
 
 <section id="lg" class="hide">
@@ -235,7 +242,7 @@ T.addEventListener("click",()=>$("cmd").focus());
 
 document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>{
  document.querySelectorAll("#nav button").forEach(x=>x.classList.toggle("on",x===b));
- for(const s of ["ov","tm","ssh","db","rt","act","api","lg"])$(s).classList.toggle("hide",s!==b.dataset.t);
+ for(const s of ["ov","tm","ssh","db","rt","act","api","learn","lg"])$(s).classList.toggle("hide",s!==b.dataset.t);
 });
 /* Thuê cloud qua backend */
 let CFG={};try{CFG=JSON.parse(localStorage.getItem("vscfg"))||{}}catch(e){}
@@ -364,6 +371,51 @@ async function neonSave(){
  if($("demo").checked)return nm("Bỏ tick Chế độ thử ở tab Thuê cloud trước.");
  try{const r=await be("PUT","/api/db",DB);nm("Đã lưu lên Neon ("+new Date(r.updated_at).toLocaleString("vi-VN")+")")}catch(e){nm("Lỗi: "+e.message)}
 }
+
+/* Học lệnh */
+const LC=[
+["Di chuyển","pwd","Xem đang ở thư mục nào"],["Di chuyển","ls","Liệt kê file trong thư mục"],["Di chuyển","ls -la","Liệt kê đầy đủ, gồm file ẩn và quyền"],["Di chuyển","cd thư-mục","Đi vào một thư mục"],["Di chuyển","cd ..","Lùi lên thư mục cha"],["Di chuyển","cd ~","Về thư mục chính của bạn"],
+["File","mkdir tên","Tạo thư mục mới"],["File","touch tên.txt","Tạo file trống"],["File","cp a.txt b.txt","Sao chép file"],["File","mv a.txt b.txt","Đổi tên hoặc di chuyển file"],["File","rm tên.txt","Xóa file (không khôi phục được)"],["File","rm -r thư-mục","Xóa cả thư mục (cẩn thận)"],
+["Xem nội dung","cat tên.txt","In toàn bộ nội dung file"],["Xem nội dung","head -n 20 tên.txt","Xem 20 dòng đầu"],["Xem nội dung","tail -n 20 tên.txt","Xem 20 dòng cuối"],["Xem nội dung","less tên.txt","Xem file dài từng trang (thoát bằng phím q)"],["Xem nội dung","grep -n từ tên.txt","Tìm một từ trong file"],["Xem nội dung","wc -l tên.txt","Đếm số dòng"],
+["Soạn thảo","nano tên.txt","Soạn file (Ctrl+O lưu, Ctrl+X thoát)"],
+["Hệ thống","whoami","Tên người dùng hiện tại"],["Hệ thống","hostname","Tên máy"],["Hệ thống","uname -a","Thông tin hệ điều hành"],["Hệ thống","free -h","Bộ nhớ RAM đang dùng"],["Hệ thống","df -h","Dung lượng ổ đĩa"],["Hệ thống","nproc","Số nhân CPU"],["Hệ thống","ps aux | head","Xem các tiến trình đang chạy"],["Hệ thống","top","Theo dõi tài nguyên (thoát bằng phím q)"],["Hệ thống","clear","Xóa màn hình"],["Hệ thống","history","Xem lại các lệnh đã gõ"],
+["Cài đặt","sudo apt update","Cập nhật danh sách gói"],["Cài đặt","sudo apt install -y tên-gói","Cài một gói phần mềm"],
+["Mạng","ping -c 3 example.com","Kiểm tra mạng (3 lần)"],["Mạng","curl -I https://example.com","Xem tiêu đề phản hồi của trang web"],
+["Git","git status","Xem file nào đã thay đổi"],["Git","git add -A","Chọn mọi thay đổi để lưu"],["Git","git commit -m 'ghi-chú'","Lưu thay đổi kèm ghi chú"],["Git","git push","Đẩy lên GitHub"],["Git","git pull","Kéo thay đổi mới từ GitHub"],["Git","git log --oneline -5","Xem 5 lần lưu gần nhất"],
+["Python","source ~/pw-env/bin/activate","Bật môi trường Python của bạn"],["Python","python3 tên.py","Chạy file Python"],["Python","deactivate","Tắt môi trường Python"],
+["Node","node -v","Xem phiên bản Node"],["Node","npm -v","Xem phiên bản npm"],["Node","node tên.js","Chạy file JavaScript"],["Node","npm install","Cài thư viện theo package.json"],["Node","npm start","Chạy ứng dụng theo script start"],
+["Phân tích file","gcc -g tên.c -o tên","Biên dịch file C kèm thông tin gỡ lỗi"],["Phân tích file","file tên","Cho biết loại file (chương trình, văn bản...)"],["Phân tích file","strings tên | head -40","In các chuỗi chữ đọc được trong file"],["Phân tích file","hexdump -C tên | head","Xem nội dung dạng số hex kèm chữ"],["Phân tích file","xxd tên | head","Xem nội dung dạng hex (cách khác)"],["Phân tích file","readelf -h tên","Xem tiêu đề của chương trình ELF"],["Phân tích file","nm tên","Liệt kê các hàm và biến trong chương trình"],["Phân tích file","ldd tên","Xem thư viện mà chương trình cần"],["Phân tích file","objdump -d tên | head -60","Xem mã assembly của chương trình"],["Phân tích file","strace ./tên","Theo dõi các lời gọi hệ thống khi chạy"],["Phân tích file","ltrace ./tên","Theo dõi các lời gọi thư viện khi chạy"],["Phân tích file","gdb -batch -ex 'disassemble main' ./tên","Xem assembly của hàm main mà không cần vào gdb"],["Phân tích file","gdb ./tên","Mở trình gỡ lỗi gdb (thoát bằng lệnh quit)"],
+["Trong Codespace","echo $CODESPACE_NAME","Tên Codespace đang dùng (biến có sẵn, thường có)"],["Trong Codespace","echo $GITHUB_REPOSITORY","Repo gắn với Codespace này"],["Trong Codespace","cd /workspaces/virtual-server","Về thư mục dự án"],["Trong Codespace","git remote -v","Xem repo GitHub đang nối tới"],["Trong Codespace","git branch","Xem đang ở nhánh nào"],
+["Bảo mật token","read -s -p 'Nhập token: ' GH_TOKEN && export GH_TOKEN","Nhập token không hiện chữ, không vào lịch sử lệnh"],["Bảo mật token","unset GH_TOKEN","Xóa token khỏi phiên hiện tại"],["Bảo mật token","history -c","Xóa lịch sử lệnh của phiên này"],
+["GitHub CLI (gh)","gh --version","Kiểm tra gh đã cài chưa (chưa có thì: sudo apt install -y gh)"],["GitHub CLI (gh)","gh auth status","Xem gh đang đăng nhập bằng gì"],["GitHub CLI (gh)","gh repo view","Xem thông tin repo hiện tại"],["GitHub CLI (gh)","gh run list","Xem các lần chạy GitHub Actions"],["GitHub CLI (gh)","gh codespace list","Xem các Codespace (cần gh đăng nhập có quyền codespace)"],["GitHub CLI (gh)","gh codespace stop -c tên-codespace","Dừng một Codespace"],["GitHub CLI (gh)","gh codespace delete -c tên-codespace","Xóa một Codespace (mất dữ liệu, cẩn thận)"],
+["API bằng curl","curl -s https://api.github.com/rate_limit","Xem giới hạn gọi API GitHub (không cần token)"],["API bằng curl","curl -s -u tên-github:$GH_TOKEN https://api.github.com/user","Xem tài khoản GitHub bằng token (cần biến GH_TOKEN)"],["API bằng curl","curl -s https://api.github.com/rate_limit | python3 -m json.tool","In kết quả JSON dễ đọc"],
+["SSH và khóa","ssh-keygen -t ed25519 -f ~/.ssh/tên-khóa","Tạo cặp khóa SSH mới"],["SSH và khóa","cat ~/.ssh/tên-khóa.pub","Xem khóa công khai (an toàn để dán khi thuê máy)"],["SSH và khóa","chmod 600 ~/.ssh/tên-khóa","Đặt quyền cho khóa riêng (SSH bắt buộc)"],["SSH và khóa","ssh -i ~/.ssh/tên-khóa user@địa-chỉ-ip","Đăng nhập vào một máy chủ khác"],["SSH và khóa","ssh -p 2222 user@địa-chỉ-ip","Đăng nhập khi SSH dùng cổng khác 22"],["SSH và khóa","scp file.txt user@địa-chỉ-ip:/home/user/","Chép file lên máy khác"],["SSH và khóa","scp user@địa-chỉ-ip:/home/user/file.txt .","Tải file từ máy khác về"],["SSH và khóa","rsync -av thư-mục/ user@địa-chỉ-ip:/đường-dẫn/","Đồng bộ cả thư mục lên máy khác"],
+["Máy chủ VPS","uptime","Máy chạy được bao lâu, mức tải"],["Máy chủ VPS","ip a","Xem địa chỉ IP của máy"],["Máy chủ VPS","sudo ss -tulpn","Xem các cổng đang mở"],["Máy chủ VPS","lsblk","Xem các ổ đĩa"],["Máy chủ VPS","du -sh * | sort -h","Xem thư mục nào chiếm nhiều chỗ"],["Máy chủ VPS","sudo systemctl status tên-dịch-vụ","Xem dịch vụ có chạy không (VPS, Codespace thường không có)"],["Máy chủ VPS","sudo systemctl restart tên-dịch-vụ","Khởi động lại một dịch vụ (VPS)"],["Máy chủ VPS","journalctl -u tên-dịch-vụ -n 50 --no-pager","Xem 50 dòng nhật ký của dịch vụ (VPS)"],["Máy chủ VPS","tail -f /var/log/syslog","Xem nhật ký hệ thống chạy trực tiếp (thoát bằng Ctrl+C)"],["Máy chủ VPS","sudo ufw status","Xem tường lửa (VPS)"],["Máy chủ VPS","sudo ufw allow 22/tcp","Cho phép cổng SSH qua tường lửa (VPS)"],["Máy chủ VPS","sudo apt upgrade -y","Nâng cấp các gói đã cài"],["Máy chủ VPS","sudo reboot","Khởi động lại máy (sẽ ngắt SSH, cẩn thận)"],
+["Cloud CLI","pip install awscli","Cài AWS CLI (khi đang bật pw-env)"],["Cloud CLI","aws --version","Kiểm tra AWS CLI"],["Cloud CLI","aws ec2 describe-instances --region ap-southeast-1","Liệt kê máy EC2 trong một vùng"],["Cloud CLI","aws ec2 stop-instances --instance-ids i-mã-máy --region ap-southeast-1","Dừng một máy EC2"],["Cloud CLI","aws ec2 terminate-instances --instance-ids i-mã-máy --region ap-southeast-1","Xóa hẳn máy EC2 (cẩn thận)"],["Cloud CLI","gcloud compute instances list","Liệt kê máy Google Cloud (cần cài gcloud)"],["Cloud CLI","gcloud compute instances stop tên-máy --zone=tên-zone","Dừng máy Google Cloud"],["Cloud CLI","hcloud server list","Liệt kê máy Hetzner (cần cài hcloud)"],
+["Phiên dài (tmux)","sudo apt install -y tmux","Cài tmux để giữ phiên khi mất kết nối"],["Phiên dài (tmux)","tmux new -s lamviec","Mở phiên tmux tên lamviec (thoát giữ phiên: Ctrl+B rồi D)"],["Phiên dài (tmux)","tmux ls","Xem các phiên tmux đang có"],["Phiên dài (tmux)","tmux attach -t lamviec","Quay lại phiên tmux đã mở"]
+];
+const LK=[["Ctrl+C","Hủy lệnh đang chạy (dùng nút Ctrl+C)"],["Tab","Gợi ý và tự điền tên file hay lệnh (dùng nút Tab)"],["Mũi tên lên, xuống","Lấy lại lệnh đã gõ (dùng nút mũi tên)"],["Enter","Chạy lệnh đang gõ (dùng nút Enter)"]];
+function renderLearn(){
+ const q=$("lq").value.trim().toLowerCase();let cat="",h="";
+ for(let i=0;i<LC.length;i++){
+  const [c,cmd,d]=LC[i];
+  if(q&&!(c+" "+cmd+" "+d).toLowerCase().includes(q))continue;
+  if(c!==cat){cat=c;h+=`<h2 style="margin:14px 0 6px">${esc(c)}</h2>`}
+  h+=`<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><code style="display:block;word-break:break-all">${esc(cmd)}</code><div class="sub">${esc(d)}</div><div class="row" style="margin-top:6px"><button class="btn" onclick="learnSend(${i})">Gửi vào terminal</button><button class="btn" onclick="learnCopy(${i})">Chép</button></div></div>`;
+ }
+ if(!q){h+=`<h2 style="margin:14px 0 6px">Phím hay dùng</h2>`+LK.map(k=>`<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><code>${esc(k[0])}</code><div class="sub">${esc(k[1])}</div></div>`).join("")}
+ $("lb").innerHTML=h||"<p class='sub'>Không có lệnh phù hợp.</p>";
+}
+function learnSend(i){
+ if(!ws||ws.readyState!==1)return $("lm").textContent="Chưa kết nối SSH. Hãy kết nối ở tab SSH thật trước.";
+ $("lm").textContent="";
+ const b=document.querySelector('#nav button[data-t="ssh"]');if(b)b.click();
+ sendK(LC[i][1]);
+}
+async function learnCopy(i){
+ try{await navigator.clipboard.writeText(LC[i][1]);$("lm").textContent="Đã chép: "+LC[i][1]}catch(e){$("lm").textContent="Không chép được, hãy tự chạm giữ vào lệnh để chép."}
+}
+renderLearn();
 
 let actTimer=null;
 function autoAct(){clearInterval(actTimer);if($("aut").checked){loadAct();actTimer=setInterval(loadAct,30000)}}
