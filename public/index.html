@@ -43,6 +43,7 @@ textarea{width:100%;height:220px;font-family:ui-monospace,Menlo,Consolas,monospa
 #tw.full #fx{display:inline-block!important}
 #tw.full #pb{order:-1}
 #tw.full #cb{order:-1}
+#tw.full #lp{order:-1}
 code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
 .hide{display:none}
 </style>
@@ -83,7 +84,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
   <div class="row"><input id="sp" type="password" placeholder="Passphrase (nếu có)" autocomplete="off"><button class="btn pri" onclick="sshConnect()">Kết nối</button><button class="btn" onclick="sshClose()">Ngắt</button><button class="btn" onclick="toggleFull()">Toàn màn hình</button></div>
   <p id="sm" class="sub"></p>
   <div id="tw"><div id="tx" style="background:#07090c;border-radius:10px;padding:6px;overflow:hidden"></div>
-  <div class="row" style="margin-top:8px"><button class="btn" onclick="sendK('\r')">Enter</button><button class="btn" onclick="sendK('\x03')">Ctrl+C</button><button class="btn" onclick="sendK('\x03\x15\x0c')">Xóa sạch</button><button class="btn" onclick="sendK('\t')">Tab</button><button class="btn" onclick="sendK('\x1b')">Esc</button><button class="btn" onclick="sendK('\x1b[A')">↑</button><button class="btn" onclick="sendK('\x1b[B')">↓</button><button class="btn" onclick="pasteK()">Dán</button><button class="btn" onclick="copyK()">Chép</button><button class="btn" id="fx" onclick="toggleFull()" style="display:none">Thu nhỏ</button></div><div id="pb" style="display:none"><textarea id="pt" placeholder="Dán nội dung vào đây rồi bấm Gửi" spellcheck="false" style="height:90px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="pasteSend()">Gửi</button><button class="btn" onclick="pasteClose()">Hủy</button></div></div><div id="cb" style="display:none"><textarea id="ct" readonly spellcheck="false" style="height:150px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="copyAll()">Sao chép tất cả</button><button class="btn" onclick="copyClose()">Đóng</button><span id="cs" class="sub"></span></div></div></div></div>
+  <div class="row" style="margin-top:8px"><button class="btn" onclick="sendK('\r')">Enter</button><button class="btn" onclick="sendK('\x03')">Ctrl+C</button><button class="btn" onclick="sendK('\x03\x15\x0c')">Xóa sạch</button><button class="btn" onclick="sendK('\t')">Tab</button><button class="btn" onclick="sendK('\x1b')">Esc</button><button class="btn" onclick="sendK('\x1b[A')">↑</button><button class="btn" onclick="sendK('\x1b[B')">↓</button><button class="btn" onclick="pasteK()">Dán</button><button class="btn" onclick="copyK()">Chép</button><button class="btn" onclick="lpToggle()">Lệnh</button><button class="btn" id="fx" onclick="toggleFull()" style="display:none">Thu nhỏ</button></div><div id="pb" style="display:none"><textarea id="pt" placeholder="Dán nội dung vào đây rồi bấm Gửi" spellcheck="false" style="height:90px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="pasteSend()">Gửi</button><button class="btn" onclick="pasteClose()">Hủy</button></div></div><div id="cb" style="display:none"><textarea id="ct" readonly spellcheck="false" style="height:150px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="copyAll()">Sao chép tất cả</button><button class="btn" onclick="copyClose()">Đóng</button><span id="cs" class="sub"></span></div></div><div id="lp" style="display:none;background:#07090c;border-radius:10px;padding:6px;margin-top:8px"><div class="row"><select id="lc2" onchange="renderLP()"></select><input id="lq2" placeholder="Tìm lệnh" oninput="renderLP()" style="flex:1;min-width:110px"><button class="btn" onclick="lpClose()">Đóng</button></div><div id="lb2" style="max-height:38vh;overflow:auto;margin-top:6px"></div></div></div></div>
 </section>
 
 <section id="db" class="hide">
@@ -292,6 +293,28 @@ async function destroy(){const id=DB.cloud.server_id;if(!id)return msg("Chưa c�
 /* SSH thật qua WebSocket */
 let ws,term;const sshMsg=t=>$("sm").textContent=t;
 function sendK(s){if(ws&&ws.readyState===1)ws.send(JSON.stringify({type:"data",d:s}));if(term)term.focus()}
+function lpToggle(){
+ const p=$("lp");
+ if(p.style.display==="none"){
+  const s=$("lc2");
+  if(!s.options.length)s.innerHTML='<option value="">Tất cả nhóm</option>'+[...new Set(LC.map(x=>x[0]))].map(c=>`<option>${esc(c)}</option>`).join("");
+  p.style.display="block";renderLP();
+ }else{lpClose();return}
+ setTimeout(fitBox,50);
+}
+function lpClose(){$("lp").style.display="none";setTimeout(fitBox,50);if(term)term.focus()}
+function renderLP(){
+ const q=$("lq2").value.trim().toLowerCase(),c=$("lc2").value;let h="";
+ for(let i=0;i<LC.length;i++){
+  const [g,cmd,d]=LC[i];
+  if(c&&g!==c)continue;
+  if(q&&!(g+" "+cmd+" "+d).toLowerCase().includes(q))continue;
+  h+=`<div onclick="lpSend(${i})" style="padding:7px 4px;border-bottom:1px solid #2a313c;cursor:pointer"><code style="color:#b7f7c8;word-break:break-all">${esc(cmd)}</code><div style="color:#8b94a3;font-size:12px">${esc(d)}</div></div>`;
+ }
+ $("lb2").innerHTML=h||"<div style='color:#8b94a3;padding:8px'>Không có lệnh phù hợp.</div>";
+ setTimeout(fitBox,50);
+}
+function lpSend(i){if(!ws||ws.readyState!==1)return;sendK(LC[i][1]);lpClose()}
 function termText(n){
  const b=term.buffer.active,end=b.length,L=[];
  for(let i=Math.max(0,end-n);i<end;i++){const l=b.getLine(i);if(l)L.push(l.translateToString(true))}
