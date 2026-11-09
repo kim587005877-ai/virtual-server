@@ -57,7 +57,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
  <div class="row"><button class="btn" onclick="act('reboot')">Khởi động lại</button><button class="btn" onclick="act('toggle')" id="tg">Tắt</button></div>
 </header>
 <nav id="nav">
- <button data-t="ov" class="on">Tổng quan</button><button data-t="tm">Terminal</button><button data-t="ssh">SSH thật</button><button data-t="db">Cơ sở dữ liệu</button><button data-t="rt">Thuê cloud</button><button data-t="act">Hoạt động</button><button data-t="api">API GitHub</button><button data-t="learn">Học lệnh</button><button data-t="lg">Nhật ký client <span id="cnt">(0)</span></button>
+ <button data-t="ov" class="on">Tổng quan</button><button data-t="tm">Terminal</button><button data-t="ssh">SSH thật</button><button data-t="db">Cơ sở dữ liệu</button><button data-t="rt">Thuê cloud</button><button data-t="act">Hoạt động</button><button data-t="api">API GitHub</button><button data-t="nw">New <span id="nnew">(0)</span></button><button data-t="learn">Học lệnh</button><button data-t="lg">Nhật ký client <span id="cnt">(0)</span></button>
 </nav>
 
 <section id="ov">
@@ -122,6 +122,13 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
  <div class="card"><h2>Tham khảo API GitHub</h2>
   <p class="sub">Header cần có: <code>Authorization: Bearer TOKEN</code>, <code>Accept: application/vnd.github+json</code>, <code>X-GitHub-Api-Version: 2022-11-28</code>. Token cổ điển cần quyền <code>codespace</code> cho nhóm Codespaces.</p>
   <div class="tw"><table id="apit"></table></div></div>
+</section>
+
+<section id="nw" class="hide">
+ <div class="card"><h2>New — công nghệ và lệnh mới / New technologies and commands</h2>
+  <p class="sub">Khi bạn gõ lệnh hoặc cài công nghệ chưa có trong danh sách, ứng dụng ghi vào đây để bạn duyệt. Điền công nghệ gốc (có thể nhiều tầng, ngăn cách bằng &gt;), nhóm và mô tả rồi bấm Duyệt để thêm vào danh sách lệnh với cây kiến thức như các lệnh khác. / Unknown commands and newly installed technologies you use are logged here. Fill in the core technology (multi-level, separated by &gt;), group and description, then Approve to add it to the command list.</p>
+  <p class="sub">Dữ liệu lưu trong trình duyệt này. / Stored in this browser.</p>
+  <div id="nwb"></div></div>
 </section>
 
 <section id="learn" class="hide">
@@ -243,7 +250,7 @@ T.addEventListener("click",()=>$("cmd").focus());
 
 document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>{
  document.querySelectorAll("#nav button").forEach(x=>x.classList.toggle("on",x===b));
- for(const s of ["ov","tm","ssh","db","rt","act","api","learn","lg"])$(s).classList.toggle("hide",s!==b.dataset.t);
+ for(const s of ["ov","tm","ssh","db","rt","act","api","nw","learn","lg"])$(s).classList.toggle("hide",s!==b.dataset.t);
 });
 /* Thuê cloud qua backend */
 let CFG={};try{CFG=JSON.parse(localStorage.getItem("vscfg"))||{}}catch(e){}
@@ -292,9 +299,9 @@ async function destroy(){const id=DB.cloud.server_id;if(!id)return msg("Chưa c�
 
 /* SSH thật qua WebSocket */
 let ws,term;const sshMsg=t=>$("sm").textContent=t;
-function sendK(s){if(ws&&ws.readyState===1)ws.send(JSON.stringify({type:"data",d:s}));if(term)term.focus()}
+function sendK(s){if(s==="\r")noteLine();if(ws&&ws.readyState===1)ws.send(JSON.stringify({type:"data",d:s}));if(term)term.focus()}
 const SEP="──────── Learn_text ────────";
-function lcHay(i){const t=TK[baseCmd(LC[i][1])]||[];return (LC[i].join(" ")+" "+t[0]+" "+t[1]).toLowerCase()}
+function lcHay(i){const b=baseCmd(LC[i][1]),t=TK[b]||[];return(LC[i].join(" ")+" "+(CH[t[0]]||[t[0]||""]).join(" ")+" "+(t[1]||"")+" "+(GE[t[1]]||"")+" "+(GE[LC[i][0]]||"")+" "+(TE[b]||"")).toLowerCase()}
 function lpToggle(){
  const p=$("lp");
  if(p.style.display==="none"){
@@ -436,7 +443,19 @@ const LC=[
 ["SSH và khóa","ssh-keygen -t ed25519 -f ~/.ssh/tên-khóa","Tạo cặp khóa SSH mới"],["SSH và khóa","cat ~/.ssh/tên-khóa.pub","Xem khóa công khai (an toàn để dán khi thuê máy)"],["SSH và khóa","chmod 600 ~/.ssh/tên-khóa","Đặt quyền cho khóa riêng (SSH bắt buộc)"],["SSH và khóa","ssh -i ~/.ssh/tên-khóa user@địa-chỉ-ip","Đăng nhập vào một máy chủ khác"],["SSH và khóa","ssh -p 2222 user@địa-chỉ-ip","Đăng nhập khi SSH dùng cổng khác 22"],["SSH và khóa","scp file.txt user@địa-chỉ-ip:/home/user/","Chép file lên máy khác"],["SSH và khóa","scp user@địa-chỉ-ip:/home/user/file.txt .","Tải file từ máy khác về"],["SSH và khóa","rsync -av thư-mục/ user@địa-chỉ-ip:/đường-dẫn/","Đồng bộ cả thư mục lên máy khác"],
 ["Máy chủ VPS","uptime","Máy chạy được bao lâu, mức tải"],["Máy chủ VPS","ip a","Xem địa chỉ IP của máy"],["Máy chủ VPS","sudo ss -tulpn","Xem các cổng đang mở"],["Máy chủ VPS","lsblk","Xem các ổ đĩa"],["Máy chủ VPS","du -sh * | sort -h","Xem thư mục nào chiếm nhiều chỗ"],["Máy chủ VPS","sudo systemctl status tên-dịch-vụ","Xem dịch vụ có chạy không (VPS, Codespace thường không có)"],["Máy chủ VPS","sudo systemctl restart tên-dịch-vụ","Khởi động lại một dịch vụ (VPS)"],["Máy chủ VPS","journalctl -u tên-dịch-vụ -n 50 --no-pager","Xem 50 dòng nhật ký của dịch vụ (VPS)"],["Máy chủ VPS","tail -f /var/log/syslog","Xem nhật ký hệ thống chạy trực tiếp (thoát bằng Ctrl+C)"],["Máy chủ VPS","sudo ufw status","Xem tường lửa (VPS)"],["Máy chủ VPS","sudo ufw allow 22/tcp","Cho phép cổng SSH qua tường lửa (VPS)"],["Máy chủ VPS","sudo apt upgrade -y","Nâng cấp các gói đã cài"],["Máy chủ VPS","sudo reboot","Khởi động lại máy (sẽ ngắt SSH, cẩn thận)"],
 ["Cloud CLI","pip install awscli","Cài AWS CLI (khi đang bật pw-env)"],["Cloud CLI","aws --version","Kiểm tra AWS CLI"],["Cloud CLI","aws ec2 describe-instances --region ap-southeast-1","Liệt kê máy EC2 trong một vùng"],["Cloud CLI","aws ec2 stop-instances --instance-ids i-mã-máy --region ap-southeast-1","Dừng một máy EC2"],["Cloud CLI","aws ec2 terminate-instances --instance-ids i-mã-máy --region ap-southeast-1","Xóa hẳn máy EC2 (cẩn thận)"],["Cloud CLI","gcloud compute instances list","Liệt kê máy Google Cloud (cần cài gcloud)"],["Cloud CLI","gcloud compute instances stop tên-máy --zone=tên-zone","Dừng máy Google Cloud"],["Cloud CLI","hcloud server list","Liệt kê máy Hetzner (cần cài hcloud)"],
-["Phiên dài (tmux)","sudo apt install -y tmux","Cài tmux để giữ phiên khi mất kết nối"],["Phiên dài (tmux)","tmux new -s lamviec","Mở phiên tmux tên lamviec (thoát giữ phiên: Ctrl+B rồi D)"],["Phiên dài (tmux)","tmux ls","Xem các phiên tmux đang có"],["Phiên dài (tmux)","tmux attach -t lamviec","Quay lại phiên tmux đã mở"]
+["Phiên dài (tmux)","sudo apt install -y tmux","Cài tmux để giữ phiên khi mất kết nối"],["Phiên dài (tmux)","tmux new -s lamviec","Mở phiên tmux tên lamviec (thoát giữ phiên: Ctrl+B rồi D)"],["Phiên dài (tmux)","tmux ls","Xem các phiên tmux đang có"],["Phiên dài (tmux)","tmux attach -t lamviec","Quay lại phiên tmux đã mở"],
+["Phân tích thuật toán","nano ~/algo.py","Soạn bộ khung đo thuật toán / Edit the benchmark script"],
+["Phân tích thuật toán","python3 ~/algo.py","Chạy bộ khung đo (kiểm tra đúng và đo thời gian) / Run the benchmark (correctness and timing)"],
+["Phân tích thuật toán","python3 -m timeit 'sorted(range(1000))'","Đo nhanh thời gian một đoạn mã / Quickly time a snippet"],
+["Phân tích thuật toán","python3 -m cProfile ~/algo.py | head -30","Xem hàm nào tốn thời gian nhất / See which functions take the most time"],
+["Phân tích thuật toán","sudo apt install -y time","Cài gói đo thời gian và bộ nhớ / Install the time and memory measuring package"],
+["Phân tích thuật toán","/usr/bin/time -v python3 ~/algo.py","Đo thời gian và bộ nhớ tối đa (cần gói time) / Measure time and peak memory (needs the time package)"],
+["Phân tích thuật toán","time ./tên","Đo thời gian chạy một chương trình / Time a program run"],
+["Phân tích thuật toán","pip install sympy big-O","Cài thư viện toán và ước lượng độ phức tạp (cần pw-env) / Install math and complexity libraries (needs pw-env)"],
+["Phân tích thuật toán","python3 -c \"from sympy import *; n,i,j=symbols('n i j',integer=True,positive=True); print(summation(summation(1,(j,1,i)),(i,1,n)))\"","Tính tổng vòng lặp lồng nhau (lý thuyết) / Sum nested loops symbolically (theory)"],
+["Phân tích thuật toán","python3 -c \"import math; a,b,d=2,2,1; c=math.log(a,b); print('Theta(n^%g log n)'%d if abs(d-c)<1e-9 else 'Theta(n^%g)'%max(c,d))\"","Định lý Master T(n)=a·T(n/b)+n^d, sửa a,b,d / Master theorem, edit a, b, d"],
+["Phân tích thuật toán","python3 -c \"import tracemalloc; tracemalloc.start(); x=sorted(range(10**6)); print(tracemalloc.get_traced_memory())\"","Đo bộ nhớ hiện tại và đỉnh của một đoạn mã / Measure current and peak memory of a snippet"],
+["Phân tích thuật toán","python3 -c \"import big_o,random; print(big_o.big_o(sorted, lambda n:[random.random() for _ in range(n)], min_n=100, max_n=20000, n_measures=10)[0])\"","Ước lượng độ phức tạp từ số liệu đo (thực nghiệm, cú pháp tùy phiên bản) / Estimate complexity from measurements (empirical, syntax varies by version)"]
 ];
 const LK=[["Ctrl+C","Hủy lệnh đang chạy (dùng nút Ctrl+C)"],["Tab","Gợi ý và tự điền tên file hay lệnh (dùng nút Tab)"],["Mũi tên lên, xuống","Lấy lại lệnh đã gõ (dùng nút mũi tên)"],["Enter","Chạy lệnh đang gõ (dùng nút Enter)"]];
 // [công nghệ gốc, nhánh, mô tả lệnh]
@@ -453,9 +472,10 @@ python3:["Python (PSF)","Python","chạy chương trình Python"],pip:["Python (
 gcc:["GNU Toolchain","Biên dịch","biên dịch chương trình C"],gdb:["GNU Toolchain","Gỡ lỗi","trình gỡ lỗi"],objdump:["GNU binutils","Phân tích file","xem mã assembly"],readelf:["GNU binutils","Phân tích file","đọc cấu trúc file ELF"],nm:["GNU binutils","Phân tích file","liệt kê hàm và biến"],strings:["GNU binutils","Phân tích file","tìm chuỗi chữ trong file"],file:["file (Ian Darwin)","Phân tích file","nhận diện loại file"],hexdump:["util-linux","Phân tích file","xem file dạng hex"],xxd:["Vim","Phân tích file","xem file dạng hex"],ldd:["GNU C Library (glibc)","Phân tích file","xem thư viện chương trình cần"],strace:["strace","Gỡ lỗi","theo dõi lời gọi hệ thống"],ltrace:["ltrace","Gỡ lỗi","theo dõi lời gọi thư viện"],
 ssh:["OpenSSH (OpenBSD)","SSH","đăng nhập máy khác"],scp:["OpenSSH (OpenBSD)","SSH","chép file qua SSH"],"ssh-keygen":["OpenSSH (OpenBSD)","SSH","tạo cặp khóa SSH"],rsync:["rsync (Andrew Tridgell)","Truyền file","đồng bộ file và thư mục"],
 systemctl:["systemd","Dịch vụ hệ thống","quản lý dịch vụ"],journalctl:["systemd","Dịch vụ hệ thống","xem nhật ký hệ thống"],reboot:["systemd","Dịch vụ hệ thống","khởi động lại máy"],ufw:["Ubuntu (Canonical)","Tường lửa","quản lý tường lửa"],
-aws:["Amazon Web Services","Cloud CLI","dòng lệnh AWS"],gcloud:["Google Cloud","Cloud CLI","dòng lệnh Google Cloud"],hcloud:["Hetzner Cloud","Cloud CLI","dòng lệnh Hetzner"],tmux:["tmux (Nicholas Marriott)","Phiên làm việc","giữ phiên khi mất kết nối"]
+aws:["Amazon Web Services","Cloud CLI","dòng lệnh AWS"],gcloud:["Google Cloud","Cloud CLI","dòng lệnh Google Cloud"],hcloud:["Hetzner Cloud","Cloud CLI","dòng lệnh Hetzner"],tmux:["tmux (Nicholas Marriott)","Phiên làm việc","giữ phiên khi mất kết nối"],
+time:["GNU Bash","Shell","đo thời gian chạy lệnh"],"/usr/bin/time":["GNU time","Đo lường","đo thời gian và bộ nhớ tối đa"]
 };
-const VO={"ssh-keygen":["-t","-f"],ssh:["-i","-p"],head:["-n"],tail:["-n"],ping:["-c"],curl:["-u"],git:["-m"],journalctl:["-u","-n"],tmux:["-s","-t"],gcc:["-o"],gdb:["-ex"],aws:["--region","--instance-ids"],gcloud:["--zone"],read:["-p"],python3:["-m"],gh:["-c"]};
+const VO={"ssh-keygen":["-t","-f"],ssh:["-i","-p"],head:["-n"],tail:["-n"],ping:["-c"],curl:["-u"],git:["-m"],journalctl:["-u","-n"],tmux:["-s","-t"],gcc:["-o"],gdb:["-ex"],aws:["--region","--instance-ids"],gcloud:["--zone"],read:["-p"],python3:["-m","-c"],gh:["-c"]};
 // mô tả tùy chọn và đối số: khóa "lệnh token" hoặc "token"
 const OD={
 "-v":"hiện phiên bản","--version":"hiện phiên bản","-h":"kích thước dễ đọc (KB, MB, GB)","--help":"xem hướng dẫn",
@@ -472,53 +492,170 @@ const OD={
 "ss -t":"TCP","ss -u":"UDP","ss -l":"cổng đang lắng nghe","ss -p":"kèm tiến trình","ss -n":"hiện số cổng",
 "journalctl -u":"theo tên dịch vụ","journalctl -n":"số dòng cuối","journalctl --no-pager":"in thẳng, không phân trang","ufw status":"xem trạng thái tường lửa","ufw allow":"cho phép một cổng","ufw 22/tcp":"cổng 22, giao thức TCP","systemctl status":"xem dịch vụ có chạy không","systemctl restart":"khởi động lại dịch vụ",
 "aws ec2":"nhóm lệnh máy ảo EC2","aws describe-instances":"liệt kê máy","aws stop-instances":"dừng máy (giữ ổ đĩa)","aws terminate-instances":"xóa hẳn máy","aws --region":"vùng AWS","aws --instance-ids":"mã máy cần thao tác","gcloud compute":"nhóm lệnh Compute Engine","gcloud instances":"máy ảo","gcloud list":"liệt kê","gcloud stop":"dừng","gcloud --zone":"vùng Google Cloud","hcloud server":"nhóm lệnh máy chủ","hcloud list":"liệt kê",
-"read -s":"không hiện chữ gõ vào","read -p":"dòng nhắc hiển thị","history -c":"xóa lịch sử của phiên"
+"python3 -c":"chạy đoạn mã Python ngay trên dòng lệnh","/usr/bin/time python3":"chương trình cần đo","/usr/bin/time -v":"in thống kê chi tiết (thời gian, bộ nhớ tối đa)","read -s":"không hiện chữ gõ vào","read -p":"dòng nhắc hiển thị","history -c":"xóa lịch sử của phiên"
 };
 function tok(s){const o=[],re=/'[^']*'|"[^"]*"|\S+/g;let m;while((m=re.exec(s)))o.push(m[0]);return o}
 function baseCmd(c){const t=tok(c);let i=0;while(t[i]==="sudo")i++;return t[i]||""}
+function bi(vi,en){return en&&en!==vi?vi+" / "+en:vi}
+const NEWROOT="Công nghệ mới / New technology (chưa phân loại / uncategorized)";
+const N_UNIX="Unix (Bell Labs, 1969) — hệ điều hành gốc, triết lý 'mỗi lệnh làm một việc' / the original OS; philosophy 'one tool, one job'";
+const N_POSIX="POSIX — chuẩn chung cho lệnh Unix / the standard for Unix commands";
+const N_GNU="Dự án GNU (1983) — viết lại công cụ Unix thành phần mềm tự do / rewrote Unix tools as free software";
+const N_LINUX="Nhân Linux (Linus Torvalds, 1991) — lõi hệ điều hành / the operating system kernel";
+const N_PTR="ptrace — cơ chế nhân để theo dõi tiến trình / kernel mechanism for tracing processes";
+const N_CLOUD="Điện toán đám mây / Cloud computing";
+const N_DEB="Debian (1993) — bản Linux nền tảng của Ubuntu / the Linux distribution Ubuntu builds on";
+// gốc của cây: công nghệ lõi tạo ra lệnh, đi từ trên xuống
+const CH={
+"GNU coreutils":[N_UNIX,N_POSIX,N_GNU,"GNU coreutils — các lệnh file và văn bản cơ bản / basic file and text commands"],
+"GNU Bash":[N_UNIX,"Bourne shell (1977) — shell đầu tiên của Unix / the first Unix shell",N_GNU,"GNU Bash (1989) — shell mặc định của Linux / the default Linux shell"],
+"GNU grep":[N_UNIX,N_GNU,"GNU grep — tìm chữ theo mẫu / search text by pattern"],
+"GNU nano":[N_UNIX,N_GNU,"GNU nano — trình soạn thảo đơn giản / a simple text editor"],
+"Dự án GNU (less)":[N_UNIX,N_GNU,"less — xem file theo trang / a pager"],
+"procps-ng":[N_LINUX,"/proc — thư mục ảo nơi nhân công bố thông tin / virtual directory where the kernel exposes info","procps-ng — công cụ đọc /proc (free, ps, top...) / tools that read /proc"],
+"util-linux":[N_LINUX,"util-linux — bộ tiện ích hệ thống của Linux / Linux system utilities"],
+"iproute2":[N_LINUX,"Netlink — kênh cấu hình mạng trong nhân / kernel channel for network configuration","iproute2 — bộ lệnh mạng hiện đại (ip, ss) / modern networking commands"],
+"iputils":[N_LINUX,"ICMP — giao thức kiểm tra mạng / network-check protocol","iputils — công cụ như ping / tools such as ping"],
+"systemd":[N_LINUX,"systemd (2010) — trình khởi động và quản lý dịch vụ / init system and service manager"],
+"Debian (APT)":[N_DEB,"dpkg — định dạng gói .deb / the .deb package format","APT — tải và cài gói tự động / automatic package manager"],
+"Ubuntu (Canonical)":[N_DEB,"Ubuntu (Canonical, 2004) — bản Linux phổ biến / a popular Linux distribution","UFW — lớp đơn giản trên tường lửa của nhân / a simple layer over the kernel firewall"],
+"ncurses (Dự án GNU)":[N_UNIX,"curses — thư viện vẽ màn hình terminal / terminal screen library","ncurses — bản tự do của curses / the free version of curses"],
+"Debian/Ubuntu (gói hostname)":[N_UNIX,"Debian/Ubuntu — gói hostname / the hostname package"],
+"curl (Daniel Stenberg)":["Internet và giao thức HTTP / the internet and the HTTP protocol","curl (1998, Daniel Stenberg) — gửi yêu cầu mạng / sends network requests"],
+"Git (Linus Torvalds)":[N_LINUX,"Git (2005, Linus Torvalds) — quản lý phiên bản phân tán, viết để phát triển Linux / distributed version control, written for Linux development"],
+"GitHub":["Git (2005) — quản lý phiên bản phân tán / distributed version control","GitHub (2008) — nơi lưu và chia sẻ kho Git / hosting for Git repositories","GitHub CLI (gh) — GitHub trong terminal / GitHub from the terminal"],
+"Python (PSF)":["Python (Guido van Rossum, 1991) — ngôn ngữ lập trình / programming language","Python Software Foundation — tổ chức duy trì Python / the foundation that maintains Python"],
+"Node.js":["JavaScript (1995, Brendan Eich) — ngôn ngữ của trình duyệt / the language of browsers","V8 — động cơ JavaScript của Chrome / Chrome's JavaScript engine","Node.js (2009, Ryan Dahl) — chạy JavaScript ngoài trình duyệt / runs JavaScript outside the browser"],
+"GNU Toolchain":[N_UNIX,N_GNU,"GNU Toolchain — gcc, gdb và công cụ biên dịch / gcc, gdb and build tools"],
+"GNU binutils":[N_UNIX,N_GNU,"GNU binutils — công cụ xử lý file chương trình / tools for program files"],
+"file (Ian Darwin)":[N_UNIX,"Magic number — dấu hiệu đầu file cho biết loại file / file signature that reveals the type","file — nhận diện loại file / identifies file types"],
+"Vim":["Vi (Bill Joy, 1976) — trình soạn thảo Unix / the Unix text editor","Vim — bản mở rộng của vi, kèm xxd / extended vi, ships with xxd"],
+"GNU C Library (glibc)":[N_UNIX,N_GNU,"GNU C Library (glibc) — thư viện C chuẩn trên Linux / the standard C library on Linux"],
+"strace":[N_LINUX,N_PTR,"strace — theo dõi lời gọi hệ thống / traces system calls"],
+"ltrace":[N_LINUX,N_PTR,"ltrace — theo dõi lời gọi thư viện / traces library calls"],
+"OpenSSH (OpenBSD)":["SSH (1995, Tatu Ylönen) — giao thức đăng nhập an toàn / secure login protocol","OpenBSD (1995) — Unix chú trọng bảo mật / security-focused Unix","OpenSSH — bản SSH tự do / the free SSH implementation"],
+"rsync (Andrew Tridgell)":[N_UNIX,"rsync (1996, Andrew Tridgell) — chỉ đồng bộ phần thay đổi / syncs only what changed"],
+"tmux (Nicholas Marriott)":[N_UNIX,"GNU Screen (1987) — tiền thân của tmux / the predecessor of tmux","tmux (2007, Nicholas Marriott) — giữ phiên khi mất kết nối / keeps sessions alive"],
+"Amazon Web Services":[N_CLOUD,"Amazon Web Services (2006) — nền tảng đám mây của Amazon / Amazon's cloud platform","AWS CLI — điều khiển AWS bằng lệnh / controls AWS from the terminal"],
+"Google Cloud":[N_CLOUD,"Google Cloud — nền tảng đám mây của Google / Google's cloud platform","gcloud — điều khiển Google Cloud bằng lệnh / controls Google Cloud from the terminal"],
+"GNU time":[N_UNIX,N_GNU,"GNU time — đo thời gian và bộ nhớ của chương trình / measures a program's time and peak memory"],
+"Hetzner Cloud":[N_CLOUD,"Hetzner Cloud — nhà cung cấp đám mây của Đức / a German cloud provider","hcloud — điều khiển Hetzner bằng lệnh / controls Hetzner from the terminal"]
+};
+const GE={"Điều hướng":"Navigation","Quản lý file":"File management","Quyền file":"File permissions","Xem nội dung":"Viewing content","Soạn thảo":"Editing","Thông tin hệ thống":"System info","Theo dõi hệ thống":"System monitoring","Terminal":"Terminal","Shell":"Shell","Cài đặt phần mềm":"Software installation","Mạng":"Networking","Quản lý mã nguồn":"Source control","Python":"Python","JavaScript":"JavaScript","Biên dịch":"Compiling","Gỡ lỗi":"Debugging","Phân tích file":"File analysis","SSH":"SSH","Truyền file":"File transfer","Dịch vụ hệ thống":"System services","Tường lửa":"Firewall","Cloud CLI":"Cloud CLI","Phiên làm việc":"Sessions","Đo lường":"Measurement","Di chuyển":"Moving around","File":"Files","Hệ thống":"System","Cài đặt":"Installing","Trong Codespace":"Inside Codespace","Bảo mật token":"Token security","GitHub CLI (gh)":"GitHub CLI","API bằng curl":"APIs with curl","SSH và khóa":"SSH and keys","Máy chủ VPS":"VPS server","Phiên dài (tmux)":"Long sessions (tmux)","Phân tích thuật toán":"Algorithm analysis"};
+const TE={pwd:"print current directory",ls:"list directory contents",cd:"change directory (shell built-in)",mkdir:"make a directory",touch:"create an empty file",cp:"copy files",mv:"rename or move files",rm:"delete files (cannot be undone)",chmod:"change file permissions",cat:"print file contents",head:"show the start of a file",tail:"show the end of a file",wc:"count lines, words, characters",sort:"sort lines",less:"page through a long file",grep:"search text in files",nano:"edit text in the terminal",whoami:"show current user",uname:"show OS information",df:"show disk space",du:"show directory size",nproc:"count CPU cores",hostname:"show machine name",free:"show RAM (memory) usage",ps:"list processes",top:"live resource monitor",uptime:"how long the machine has run",lsblk:"list disks",clear:"clear the screen",history:"show command history",source:"run a file in the current shell",echo:"print text or a variable",read:"read user input into a variable",unset:"remove a variable",export:"pass a variable to child programs",apt:"package manager",ping:"test network connectivity",curl:"send HTTP requests",ip:"show network configuration",ss:"show open ports",git:"version control",gh:"official GitHub command line",python3:"run Python programs",pip:"install Python libraries",deactivate:"leave the virtual environment",node:"run JavaScript programs",npm:"JavaScript package manager",gcc:"compile C programs",gdb:"debugger",objdump:"show assembly code",readelf:"read ELF file structure",nm:"list functions and variables",strings:"find printable strings in a file",file:"identify a file type",hexdump:"view a file in hex",xxd:"view a file in hex",ldd:"show shared libraries a program needs",strace:"trace system calls",ltrace:"trace library calls",ssh:"log in to another machine",scp:"copy files over SSH","ssh-keygen":"create an SSH key pair",rsync:"sync files and folders",systemctl:"manage services",journalctl:"read system logs",reboot:"restart the machine",ufw:"manage the firewall",aws:"AWS command line",gcloud:"Google Cloud command line",hcloud:"Hetzner command line",tmux:"keep sessions alive after disconnects",time:"time how long a command runs","/usr/bin/time":"measure time and peak memory"};
+const OE={"-v":"show version","--version":"show version","-h":"human-readable sizes (KB, MB, GB)","--help":"show help",
+"ls -l":"long format (permissions, owner, size)","ls -a":"show hidden files (names starting with a dot)","cd ..":"parent directory","cd ~":"your home directory","rm -r":"delete a folder recursively",
+"head -n":"number of lines from the start","tail -n":"number of lines from the end","tail -f":"follow: show new lines as they arrive","grep -n":"show line numbers","wc -l":"count lines","du -s":"summary: total per item","sort -h":"compare human-readable numbers (K, M, G)",
+"ps aux":"a all users, u show user, x include processes without a terminal","apt update":"refresh the package list","apt install":"install packages","apt upgrade":"upgrade installed packages","-y":"answer yes automatically",
+"ping -c":"number of packets to send","ping example.com":"domain to test","curl -s":"silent, no progress bar","curl -I":"fetch headers only","curl -u":"user:password (or token) for authentication","ip a":"list addresses (short for addr)",
+"git status":"show changed files","git add":"stage changes","git -A":"all changes","git commit":"save staged changes as a commit","git -m":"commit message","git push":"upload commits to GitHub","git pull":"download new commits from GitHub","git log":"show commit history","git --oneline":"one line per commit","git remote":"show remote repositories","git -v":"show URLs too","git branch":"list branches",
+"gh auth":"login commands","gh status":"show login status","gh repo":"repository commands","gh view":"view details","gh run":"GitHub Actions commands","gh list":"list items","gh codespace":"Codespace commands","gh stop":"stop","gh delete":"delete (data is lost)","gh -c":"Codespace name",
+"python3 -m":"run a built-in Python module","pip install":"install a library","npm install":"install libraries from package.json","npm start":"run the start script",
+"gcc -g":"include debug information","gcc -o":"output program name","readelf -h":"print the ELF header","objdump -d":"disassemble machine code","hexdump -C":"hex plus characters","gdb -batch":"run automatically then exit","gdb -ex":"run one gdb command",
+"ssh-keygen -t":"key type (e.g. ed25519)","ssh-keygen -f":"file to save the key","ssh -i":"private key file for login","ssh -p":"connection port","rsync -a":"archive: keep attributes, recurse","rsync -v":"verbose","scp .":"current directory (destination)","chmod 600":"only the owner can read and write",
+"tmux new":"create a new session","tmux -s":"session name","tmux ls":"list sessions","tmux attach":"re-enter a session","tmux -t":"target session",
+"ss -t":"TCP","ss -u":"UDP","ss -l":"listening ports","ss -p":"show processes","ss -n":"numeric ports",
+"journalctl -u":"by service name","journalctl -n":"number of last lines","journalctl --no-pager":"print directly, no pager","ufw status":"show firewall status","ufw allow":"allow a port","ufw 22/tcp":"port 22, TCP protocol","systemctl status":"show whether a service is running","systemctl restart":"restart a service",
+"aws ec2":"EC2 virtual machine commands","aws describe-instances":"list machines","aws stop-instances":"stop machines (disks are kept)","aws terminate-instances":"delete machines permanently","aws --region":"AWS region","aws --instance-ids":"machine IDs to act on","gcloud compute":"Compute Engine commands","gcloud instances":"virtual machines","gcloud list":"list","gcloud stop":"stop","gcloud --zone":"Google Cloud zone","hcloud server":"server commands","hcloud list":"list",
+"python3 -c":"run a Python snippet right on the command line","/usr/bin/time python3":"the program to measure","/usr/bin/time -v":"verbose statistics (time, peak memory)","read -s":"do not echo typed characters","read -p":"prompt text","history -c":"clear this session's history"};
 function argDesc(a){
- if(/[À-ỹ]/.test(a))return"phần bạn thay bằng giá trị thật";
- if(/^https?:/.test(a))return"địa chỉ web";
- if(/@/.test(a))return"người dùng@máy (có thể kèm :đường-dẫn)";
- if(/^\$/.test(a))return"biến môi trường (giá trị có sẵn)";
- if(/^[A-Z_]+$/.test(a))return"tên biến";
- if(/^\d+$/.test(a))return"một con số";
- if(a==="*")return"ký tự đại diện: mọi file trong thư mục";
- if(/\//.test(a)||/^[~.]/.test(a))return"đường dẫn hoặc tên file";
- return"giá trị bạn nhập";
+ if(/[À-ỹ]/.test(a))return"phần bạn thay bằng giá trị thật / replace with your real value";
+ if(/^https?:/.test(a))return"địa chỉ web / web address";
+ if(/@/.test(a))return"người dùng@máy (có thể kèm :đường-dẫn) / user@host (optionally :path)";
+ if(/^\$/.test(a))return"biến môi trường (giá trị có sẵn) / environment variable (preset value)";
+ if(/^[A-Z_]+$/.test(a))return"tên biến / variable name";
+ if(/^\d+$/.test(a))return"một con số / a number";
+ if(a==="*")return"ký tự đại diện: mọi file trong thư mục / wildcard: every file in the folder";
+ if(/\//.test(a)||/^[~.]/.test(a))return"đường dẫn hoặc tên file / path or file name";
+ return"giá trị bạn nhập / a value you type";
 }
 function segTree(seg){
  const t=tok(seg);if(!t.length)return"";
  let i=0,sudo=false;while(t[i]==="sudo"){sudo=true;i++}
- const cmd=t[i++]||"",info=TK[cmd]||["Linux","Công cụ dòng lệnh","(chưa có mô tả)"],kids=[];
- if(sudo)kids.push(["sudo","tiền tố: chạy với quyền quản trị"]);
+ const cmd=t[i++]||"",info=TK[cmd]||[NEWROOT,"Mới / New","(chưa có mô tả / no description yet)"];
+ const kids=[],dsc=k=>bi(OD[k],OE[k]),NO="(chưa có giải thích / no explanation yet)";
+ if(sudo)kids.push(["sudo","tiền tố / prefix: chạy với quyền quản trị / run as administrator"]);
  for(;i<t.length;i++){
   let a=t[i],v=null;
   if(a.startsWith("-")){
    const eq=a.indexOf("=");
    if(eq>0){v=a.slice(eq+1);a=a.slice(0,eq)}else if((VO[cmd]||[]).includes(a)&&i+1<t.length)v=t[++i];
-   let d=OD[cmd+" "+a]||OD[a];
-   if(!d&&/^-\d+$/.test(a))d="lấy "+a.slice(1)+" dòng (viết tắt của -n)";
-   if(!d&&v===null&&/^-[A-Za-z]{2,}$/.test(a)){for(const ch of a.slice(1))kids.push(["-"+ch+" (trong "+a+")","tùy chọn: "+(OD[cmd+" -"+ch]||OD["-"+ch]||"(chưa có giải thích)")]);continue}
-   kids.push([a+(v!==null?" "+v:""),"tùy chọn: "+(d||"(chưa có giải thích)")+(v!==null?" — giá trị: "+v:"")]);
-  }else{const d=OD[cmd+" "+a];kids.push([a,d?"giải thích: "+d:"đối số: "+argDesc(a)])}
+   const k=OD[cmd+" "+a]?cmd+" "+a:(OD[a]?a:null);let d=k?dsc(k):null;
+   if(!d&&/^-\d+$/.test(a))d="lấy "+a.slice(1)+" dòng (viết tắt của -n) / take "+a.slice(1)+" lines (short for -n)";
+   if(!d&&v===null&&/^-[A-Za-z]{2,}$/.test(a)){
+    for(const ch of a.slice(1)){const kk=OD[cmd+" -"+ch]?cmd+" -"+ch:(OD["-"+ch]?"-"+ch:null);kids.push(["-"+ch+" (trong/in "+a+")","tùy chọn / option: "+(kk?dsc(kk):NO)])}
+    continue}
+   kids.push([a+(v!==null?" "+v:""),"tùy chọn / option: "+(d||NO)+(v!==null?" — giá trị / value: "+v:"")]);
+  }else{const k=cmd+" "+a;kids.push([a,OD[k]?"giải thích / note: "+dsc(k):"đối số / argument: "+argDesc(a)])}
  }
- const L=[info[0],"└─ "+info[1],"   └─ "+cmd+" — "+info[2]];
- kids.forEach((k,j)=>L.push("      "+(j===kids.length-1?"└─ ":"├─ ")+k[0]+"   "+k[1]));
+ const nodes=[...(CH[info[0]]||[info[0]]),bi(info[1],GE[info[1]]),cmd+" — "+bi(info[2],TE[cmd])];
+ const L=nodes.map((n,d)=>d===0?n:" ".repeat(3*(d-1))+"└─ "+n),pad=" ".repeat(3*(nodes.length-1));
+ kids.forEach((k,j)=>L.push(pad+(j===kids.length-1?"└─ ":"├─ ")+k[0]+"   "+k[1]));
  return L.join("\n");
 }
 function learnText(c){
  const segs=c.split(/\s*(?:\|\||\||&&)\s*/).filter(Boolean);
- const parts=segs.map((x,k)=>(segs.length>1?"Phần "+(k+1)+": "+x+"\n":"")+segTree(x));
- const b=baseCmd(c),bi=TK[b]&&TK[b][0]==="GNU Bash";
- return parts.join("\n\n")+(b?"\n\nTự tra cứu: "+(bi?"help "+b:b+" --help  hoặc  man "+b):"");
+ const parts=segs.map((x,k)=>(segs.length>1?"Phần / Part "+(k+1)+": "+x+"\n":"")+segTree(x));
+ const b=baseCmd(c),bash=TK[b]&&TK[b][0]==="GNU Bash";
+ return parts.join("\n\n")+(b?"\n\nTự tra cứu / Look up: "+(bash?"help "+b:b+" --help  |  man "+b):"");
 }
+/* New: công nghệ và lệnh mới để duyệt */
+const NIGN=new Set(["exit","logout","man","which","type","alias","sleep","true","false","env","printf","test","set","jobs","fg","bg","kill","date","id","pip3","python","time","tree","mount","wait","yes","sudo"]);
+function ls_(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
+function ss_(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+let NEWQ=ls_("vsnew",[]),NIGNL=ls_("vsign",[]),EXTRA=ls_("vsextra",[]);
+function addToList(g,cmd,vi,en,root){
+ const b=baseCmd(cmd);
+ TK[b]=[root,g,vi];if(en)TE[b]=en;
+ CH[root]=root.split(">").map(x=>x.trim()).filter(Boolean);
+ const row=[g,cmd,en?vi+" / "+en:vi];let at=-1;
+ for(let i=LC.length-1;i>=0;i--)if(LC[i][0]===g){at=i;break}
+ if(at<0)LC.push(row);else LC.splice(at+1,0,row);
+}
+function newBadge(){const e=$("nnew");if(e)e.textContent="("+NEWQ.length+")"}
+function noteCmd(cmd){
+ const found=[],ins=/(?:^|\s)(?:apt(?:-get)?|pip3?|npm|snap|cargo|gem|go)\s+(?:install|add)\s+(.+)$/.exec(cmd);
+ if(ins)ins[1].split(/\s+/).filter(x=>x&&!x.startsWith("-")).forEach(p=>found.push([p,"cài đặt / install",p]));
+ const b=baseCmd(cmd);
+ if(b&&!TK[b]&&!NIGN.has(b))found.push([b,"đã gõ / typed",cmd]);
+ let ch=false;
+ for(const [name,kind,ex] of found){
+  if(TK[name]||NIGNL.includes(name))continue;
+  const o=NEWQ.find(x=>x.base===name);
+  if(o){o.n++;o.src=cmd}else NEWQ.push({base:name,kind,ex,src:cmd,n:1});
+  ch=true;
+ }
+ if(ch){ss_("vsnew",NEWQ);newBadge();const nw=$("nw");if(nw&&!nw.classList.contains("hide"))renderNew()}
+}
+function noteLine(){
+ try{
+  if(!term)return;
+  const b=term.buffer.active,y=b.baseY+b.cursorY;let st=y,txt="";
+  while(st>0&&b.getLine(st)&&b.getLine(st).isWrapped)st--;
+  for(let k=st;k<=y;k++){const l=b.getLine(k);if(l)txt+=l.translateToString(k<y)}
+  const m=/^.*?\s[$#]\s+(.*\S)\s*$/.exec(txt);if(m)noteCmd(m[1]);
+ }catch(e){}
+}
+function renderNew(){
+ const box=$("nwb");
+ if(!NEWQ.length){box.innerHTML="<p class='sub'>Chưa có mục mới. / Nothing new yet.</p>";return}
+ box.innerHTML=NEWQ.map((x,i)=>`<details style="padding:8px 0;border-bottom:1px solid var(--bd)"><summary><code>${esc(x.base)}</code><span class="sub"> — ${esc(x.kind)} · ${x.n}×</span></summary><div class="sub" style="margin-top:6px">Command_text</div><code style="display:block;word-break:break-all">${esc(x.ex)}</code><div class="sub" style="margin-top:8px">Learn_text</div><pre style="overflow:auto;font-size:12px;margin:4px 0">${esc(learnText(x.ex))}</pre><input id="nr${i}" placeholder="Công nghệ gốc / Core technology (ngăn cách bằng >, ví dụ: Python > Flask)" style="width:100%;margin-top:6px"><input id="ng${i}" placeholder="Nhóm / Group" value="Mới / New" style="width:100%;margin-top:6px"><input id="nv${i}" placeholder="Mô tả tiếng Việt" style="width:100%;margin-top:6px"><input id="ne${i}" placeholder="English description" style="width:100%;margin-top:6px"><div class="row" style="margin-top:8px"><button class="btn pri" onclick="newApprove(${i})">Duyệt và thêm / Approve &amp; add</button><button class="btn" onclick="newDismiss(${i})">Bỏ qua / Dismiss</button></div></details>`).join("");
+}
+function newApprove(i){
+ const x=NEWQ[i];if(!x)return;
+ const root=$("nr"+i).value.trim()||"Công nghệ mới / New technology",g=$("ng"+i).value.trim()||"Mới / New",vi=$("nv"+i).value.trim()||"(chưa có mô tả)",en=$("ne"+i).value.trim();
+ addToList(g,x.ex,vi,en,root);EXTRA.push({g,cmd:x.ex,vi,en,root});ss_("vsextra",EXTRA);
+ NEWQ.splice(i,1);ss_("vsnew",NEWQ);newBadge();renderNew();renderLearn();
+}
+function newDismiss(i){const x=NEWQ[i];if(!x)return;NIGNL.push(x.base);ss_("vsign",NIGNL);NEWQ.splice(i,1);ss_("vsnew",NEWQ);newBadge();renderNew()}
+EXTRA.forEach(x=>addToList(x.g,x.cmd,x.vi,x.en,x.root));newBadge();
+document.querySelector('#nav button[data-t="nw"]').addEventListener("click",renderNew);
 function renderLearn(){
  const q=$("lq").value.trim().toLowerCase();let cat="",h="";
  for(let i=0;i<LC.length;i++){
   if(q&&!lcHay(i).includes(q))continue;
   const [c,cmd,d]=LC[i];
-  if(c!==cat){cat=c;h+=`<h2 style="margin:14px 0 6px">${esc(c)}</h2>`}
+  if(c!==cat){cat=c;h+=`<h2 style="margin:14px 0 6px">${esc(bi(c,GE[c]))}</h2>`}
   h+=`<details style="padding:6px 0;border-bottom:1px solid var(--bd)"><summary><code>${esc(cmd)}</code><span class="sub"> — ${esc(d)}</span></summary><div class="sub" style="margin-top:6px">Command_text</div><code style="display:block;word-break:break-all">${esc(cmd)}</code><div class="sub" style="margin-top:8px">Learn_text</div><pre style="overflow:auto;font-size:12px;margin:4px 0">${esc(learnText(cmd))}</pre></details>`;
  }
  if(!q)h+=`<h2 style="margin:14px 0 6px">Phím hay dùng</h2>`+LK.map(k=>`<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><code>${esc(k[0])}</code><div class="sub">${esc(k[1])}</div></div>`).join("");
