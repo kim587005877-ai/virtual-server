@@ -84,7 +84,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
   <div class="row"><input id="sp" type="password" placeholder="Passphrase (nếu có)" autocomplete="off"><button class="btn pri" onclick="sshConnect()">Kết nối</button><button class="btn" onclick="sshClose()">Ngắt</button><button class="btn" onclick="toggleFull()">Toàn màn hình</button></div>
   <p id="sm" class="sub"></p>
   <div id="tw"><div id="tx" style="background:#07090c;border-radius:10px;padding:6px;overflow:hidden"></div>
-  <div class="row" style="margin-top:8px"><button class="btn" onclick="sendK('\r')">Enter</button><button class="btn" onclick="sendK('\x03')">Ctrl+C</button><button class="btn" onclick="sendK('\x03\x15\x0c')">Xóa sạch</button><button class="btn" onclick="sendK('\t')">Tab</button><button class="btn" onclick="sendK('\x1b')">Esc</button><button class="btn" onclick="sendK('\x1b[A')">↑</button><button class="btn" onclick="sendK('\x1b[B')">↓</button><button class="btn" onclick="pasteK()">Dán</button><button class="btn" onclick="copyK()">Chép</button><button class="btn" onclick="lpToggle()">Lệnh</button><button class="btn" id="fx" onclick="toggleFull()" style="display:none">Thu nhỏ</button></div><div id="pb" style="display:none"><textarea id="pt" placeholder="Dán nội dung vào đây rồi bấm Gửi" spellcheck="false" style="height:90px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="pasteSend()">Gửi</button><button class="btn" onclick="pasteClose()">Hủy</button></div></div><div id="cb" style="display:none"><textarea id="ct" readonly spellcheck="false" style="height:150px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="copyAll()">Sao chép tất cả</button><button class="btn" onclick="copyClose()">Đóng</button><span id="cs" class="sub"></span></div></div><div id="lp" style="display:none;background:#07090c;border-radius:10px;padding:6px;margin-top:8px;max-height:75vh;overflow-y:auto"><div class="row"><select id="lc2" onchange="renderLP()"></select><input id="lq2" placeholder="Tìm theo việc cần làm hoặc tên lệnh" oninput="renderLP()" style="flex:1;min-width:110px"></div><div id="lb2" style="max-height:22vh;overflow:auto;margin-top:6px"></div><div style="color:#8b94a3;font-size:12px;margin-top:8px">Command_text</div><code id="lv" style="display:block;color:#b7f7c8;word-break:break-all;min-height:20px">(chưa chọn lệnh)</code><textarea id="lt" wrap="off" spellcheck="false" oninput="lpPreview()" style="height:140px;margin-top:6px;white-space:pre;overflow:auto;font-size:12px"></textarea><div class="row" style="margin-top:6px"><button class="btn" onclick="lpPaste()">Dán</button><button class="btn" onclick="lpCopy()">Chép</button><button class="btn" onclick="lpClear()">Xóa</button><button class="btn pri" onclick="lpPush()">Push</button><button class="btn" onclick="lpClose()">Đóng</button></div><div id="ls2" style="color:#8b94a3;font-size:12px;margin-top:4px"></div></div></div></div>
+  <div class="row" style="margin-top:8px"><button class="btn" onclick="sendK('\r')">Enter</button><button class="btn" onclick="sendK('\x03')">Ctrl+C</button><button class="btn" onclick="sendK('\x03\x15\x0c')">Xóa sạch</button><button class="btn" onclick="sendK('\t')">Tab</button><button class="btn" onclick="sendK('\x1b')">Esc</button><button class="btn" onclick="sendK('\x1b[A')">↑</button><button class="btn" onclick="sendK('\x1b[B')">↓</button><button class="btn" onclick="pasteK()">Dán</button><button class="btn" onclick="copyK()">Chép</button><button class="btn" onclick="lpToggle()">Lệnh</button><button class="btn" id="fx" onclick="toggleFull()" style="display:none">Thu nhỏ</button></div><div id="pb" style="display:none"><textarea id="pt" placeholder="Dán nội dung vào đây rồi bấm Gửi" spellcheck="false" style="height:90px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="pasteSend()">Gửi</button><button class="btn" onclick="pasteClose()">Hủy</button></div></div><div id="cb" style="display:none"><textarea id="ct" readonly spellcheck="false" style="height:150px;margin-top:8px"></textarea><div class="row" style="margin-top:6px"><button class="btn pri" onclick="copyAll()">Sao chép tất cả</button><button class="btn" onclick="copyClose()">Đóng</button><span id="cs" class="sub"></span></div></div><div id="lp" style="display:none;background:#07090c;border-radius:10px;padding:6px;margin-top:8px;max-height:75vh;overflow-y:auto"><div class="row"><input id="lq2" placeholder="Tìm theo việc cần làm hoặc tên lệnh" oninput="renderLP()" style="flex:1;min-width:110px"></div><div id="lcr" style="color:#8b94a3;font-size:12px;margin-top:6px"></div><div id="lb2" style="max-height:22vh;overflow:auto;margin-top:6px"></div><div style="color:#8b94a3;font-size:12px;margin-top:8px">Command_text</div><code id="lv" style="display:block;color:#b7f7c8;word-break:break-all;min-height:20px">(chưa chọn lệnh)</code><textarea id="lt" wrap="off" spellcheck="false" oninput="lpPreview()" style="height:140px;margin-top:6px;white-space:pre;overflow:auto;font-size:12px"></textarea><div class="row" style="margin-top:6px"><button class="btn" onclick="lpPaste()">Dán</button><button class="btn" onclick="lpCopy()">Chép</button><button class="btn" onclick="lpClear()">Xóa</button><button class="btn pri" onclick="lpPush()">Push</button><button class="btn" onclick="lpClose()">Đóng</button></div><div id="ls2" style="color:#8b94a3;font-size:12px;margin-top:4px"></div></div></div></div>
 </section>
 
 <section id="db" class="hide">
@@ -128,12 +128,20 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
  <div class="card"><h2>New — công nghệ và lệnh mới / New technologies and commands</h2>
   <p class="sub">Khi bạn gõ lệnh hoặc cài công nghệ chưa có trong danh sách, ứng dụng ghi vào đây để bạn duyệt. Điền công nghệ gốc (có thể nhiều tầng, ngăn cách bằng &gt;), nhóm và mô tả rồi bấm Duyệt để thêm vào danh sách lệnh với cây kiến thức như các lệnh khác. / Unknown commands and newly installed technologies you use are logged here. Fill in the core technology (multi-level, separated by &gt;), group and description, then Approve to add it to the command list.</p>
   <p class="sub">Dữ liệu lưu trong trình duyệt này. / Stored in this browser.</p>
+  <label style="display:block;margin:8px 0"><input type="checkbox" id="nauto" onchange="setAuto(this.checked)"> Tự thêm / Auto-add: mục mới được thêm ngay vào danh sách lệnh, bạn sửa lại sau ở mục Đã tự thêm. / new items go straight into the command list; refine them later under Auto-added.</label>
+  <h2 style="margin:14px 0 6px">Thêm thủ công / Add manually</h2>
+  <p class="sub">Nhập đường dẫn cây (nhánh gốc mới cũng được), và các lệnh nếu có. Thiếu tầng nào, ứng dụng tạo tầng đó. / Enter a tree path (new root branches are fine) and optional commands; missing levels are created.</p>
+  <input id="mp" placeholder="Đường dẫn cây / Tree path: Ngôn ngữ lập trình &gt; Rust &gt; ... (tối đa 6 tầng)" style="width:100%;margin-top:6px">
+  <textarea id="mc" placeholder="Lệnh, mỗi dòng một lệnh (có thể để trống) / Commands, one per line (optional)" style="height:70px;margin-top:6px"></textarea>
+  <input id="mv" placeholder="Mô tả tiếng Việt" style="width:100%;margin-top:6px"><input id="me" placeholder="English description" style="width:100%;margin-top:6px">
+  <div class="row" style="margin-top:8px"><button class="btn pri" onclick="manualAdd()">Thêm / Add</button><span id="mmsg" class="sub"></span></div>
   <div id="nwb"></div></div>
 </section>
 
 <section id="learn" class="hide">
  <div class="card"><h2>Học gõ lệnh Linux</h2>
   <p class="sub">Chỉ để xem. Chạm vào một lệnh để mở Command_text và Learn_text (cây kiến thức: công nghệ tạo ra lệnh, nhóm, lệnh, tùy chọn và đối số). Muốn sửa lệnh rồi đẩy vào terminal, dùng nút Lệnh trong tab SSH thật.</p>
+  <div id="lsub" class="row" style="margin:8px 0"><button class="btn pri" data-v="tree" onclick="learnView('tree')">Cây / Tree</button><button class="btn" data-v="cmd" onclick="learnView('cmd')">Danh sách / List</button><button class="btn" data-v="libs" onclick="learnView('libs')">Thư viện động / Shared libs</button><button class="btn" data-v="fs" onclick="learnView('fs')">Hệ thống file / File system</button><button class="btn" data-v="dev" onclick="learnView('dev')">Phát triển &amp; thiết kế / Dev &amp; design</button><button class="btn" data-v="grp" onclick="autoGroupGo()">Auto group</button></div>
   <input id="lq" placeholder="Tìm lệnh (ví dụ: xóa, git, ram)" oninput="renderLearn()" style="width:100%">
   <p id="lm" class="sub"></p><div id="lb"></div></div>
 </section>
@@ -301,25 +309,33 @@ async function destroy(){const id=DB.cloud.server_id;if(!id)return msg("Chưa c�
 let ws,term;const sshMsg=t=>$("sm").textContent=t;
 function sendK(s){if(s==="\r")noteLine();if(ws&&ws.readyState===1)ws.send(JSON.stringify({type:"data",d:s}));if(term)term.focus()}
 const SEP="──────── Learn_text ────────";
-function lcHay(i){const b=baseCmd(LC[i][1]),t=TK[b]||[];return(LC[i].join(" ")+" "+(CH[t[0]]||[t[0]||""]).join(" ")+" "+(t[1]||"")+" "+(GE[t[1]]||"")+" "+(GE[LC[i][0]]||"")+" "+(TE[b]||"")).toLowerCase()}
+function lcHay(i){const r=LC[i],b=baseCmd(r[1]),t=TK[b]||[];return(r.slice(0,3).join(" ")+" "+pathOfRow(r).join(" ")+" "+(t[1]||"")+" "+(GE[t[1]]||"")+" "+(GE[r[0]]||"")+" "+(TE[b]||"")).toLowerCase()}
+function lpFill(){}
 function lpToggle(){
  const p=$("lp");
  if(p.style.display==="none"){
-  const sel=$("lc2");
-  if(!sel.options.length)sel.innerHTML='<option value="">Tất cả nhóm</option>'+[...new Set(LC.map(x=>x[0]))].map(c=>`<option>${esc(c)}</option>`).join("");
+  lpFill();
   p.style.display="block";renderLP();
  }else{lpClose();return}
  setTimeout(fitBox,50);
 }
 function lpClose(){$("lp").style.display="none";setTimeout(fitBox,50);if(term)term.focus()}
+let LPP=[];
+function lpNode(){let nd=buildTree();for(const n of LPP){nd=nd.c.get(n);if(!nd){LPP=[];return buildTree()}}return nd}
+function lpIn(k){LPP.push(Array.from(lpNode().c.keys())[k]);renderLP()}
+function lpGo(j){LPP=LPP.slice(0,j+1);renderLP()}
+function lpCmd(i,where){return `<div onclick="lpPick(${i})" style="padding:7px 4px;border-bottom:1px solid #2a313c;cursor:pointer"><code style="color:#b7f7c8;word-break:break-all">${esc(LC[i][1])}</code><div style="color:#8b94a3;font-size:12px">${where?esc(where)+" — ":""}${esc(LC[i][2])}</div></div>`}
 function renderLP(){
- const q=$("lq2").value.trim().toLowerCase(),c=$("lc2").value;let h="";
- for(let i=0;i<LC.length;i++){
-  if(c&&LC[i][0]!==c)continue;
-  if(q&&!lcHay(i).includes(q))continue;
-  h+=`<div onclick="lpPick(${i})" style="padding:7px 4px;border-bottom:1px solid #2a313c;cursor:pointer"><code style="color:#b7f7c8;word-break:break-all">${esc(LC[i][1])}</code><div style="color:#8b94a3;font-size:12px">${esc(LC[i][2])}</div></div>`;
+ const q=$("lq2").value.trim().toLowerCase(),cr=$("lcr");let h="";
+ if(q){cr.textContent="Kết quả tìm kiếm / Search results";for(let i=0;i<LC.length;i++)if(lcHay(i).includes(q))h+=lpCmd(i,pathOfRow(LC[i]).join(" › "))}
+ else{
+  const nd=lpNode(),sp=t=>`style="cursor:pointer;color:#b7f7c8" onclick="${t}"`;
+  cr.innerHTML=`<span ${sp("lpGo(-1)")}>⌂ Gốc / Root</span>`+LPP.map((n,j)=>` › <span ${sp("lpGo("+j+")")}>[${j+1}] ${esc(n)}</span>`).join("");
+  Array.from(nd.c.entries()).forEach(([n,c],k)=>{h+=`<div onclick="lpIn(${k})" style="padding:7px 4px;border-bottom:1px solid #2a313c;cursor:pointer"><span style="color:#8b94a3">[${LPP.length+1}]</span> <b style="color:#e6e9ee">${esc(n)}</b> <span style="color:#8b94a3">(${cnt(c)})</span></div>`});
+  nd.cmds.forEach(i=>{h+=lpCmd(i,"")});
  }
- $("lb2").innerHTML=h||"<div style='color:#8b94a3;padding:8px'>Không có lệnh phù hợp.</div>";
+ $("lb2").innerHTML=h||"<div style='color:#8b94a3;padding:8px'>Không có gì ở đây. / Nothing here.</div>";
+ setTimeout(fitBox,50);
 }
 function cmdPart(){const v=$("lt").value,k=v.indexOf(SEP);return(k<0?v:v.slice(0,k)).replace(/\s+$/,"")}
 function lpPreview(){$("lv").textContent=cmdPart()||"(trống)"}
@@ -569,7 +585,7 @@ function argDesc(a){
  if(/\//.test(a)||/^[~.]/.test(a))return"đường dẫn hoặc tên file / path or file name";
  return"giá trị bạn nhập / a value you type";
 }
-function segTree(seg){
+function segTree(seg,rp){
  const t=tok(seg);if(!t.length)return"";
  let i=0,sudo=false;while(t[i]==="sudo"){sudo=true;i++}
  const cmd=t[i++]||"",info=TK[cmd]||[NEWROOT,"Mới / New","(chưa có mô tả / no description yet)"];
@@ -588,69 +604,365 @@ function segTree(seg){
    kids.push([a+(v!==null?" "+v:""),"tùy chọn / option: "+(d||NO)+(v!==null?" — giá trị / value: "+v:"")]);
   }else{const k=cmd+" "+a;kids.push([a,OD[k]?"giải thích / note: "+dsc(k):"đối số / argument: "+argDesc(a)])}
  }
- const nodes=[...(CH[info[0]]||[info[0]]),bi(info[1],GE[info[1]]),cmd+" — "+bi(info[2],TE[cmd])];
+ const path=rp||pathOfCmd(seg),nodes=[...path.map((n,d)=>"["+(d+1)+"] "+n),"["+(path.length+1)+"] "+cmd+" — "+bi(info[2],TE[cmd])];
  const L=nodes.map((n,d)=>d===0?n:" ".repeat(3*(d-1))+"└─ "+n),pad=" ".repeat(3*(nodes.length-1));
  kids.forEach((k,j)=>L.push(pad+(j===kids.length-1?"└─ ":"├─ ")+k[0]+"   "+k[1]));
  return L.join("\n");
 }
 function learnText(c){
  const segs=c.split(/\s*(?:\|\||\||&&)\s*/).filter(Boolean);
- const parts=segs.map((x,k)=>(segs.length>1?"Phần / Part "+(k+1)+": "+x+"\n":"")+segTree(x));
+ const parts=segs.map((x,k)=>(segs.length>1?"Phần / Part "+(k+1)+": "+x+"\n":"")+segTree(x,k===0?pathOfCmd(c):null));
  const b=baseCmd(c),bash=TK[b]&&TK[b][0]==="GNU Bash";
- return parts.join("\n\n")+(b?"\n\nTự tra cứu / Look up: "+(bash?"help "+b:b+" --help  |  man "+b):"");
+ return parts.join("\n\n")+"\n\n"+LEGEND+(b?"\n\nTự tra cứu / Look up: "+(bash?"help "+b:b+" --help  |  man "+b):"");
 }
 /* New: công nghệ và lệnh mới để duyệt */
 const NIGN=new Set(["exit","logout","man","which","type","alias","sleep","true","false","env","printf","test","set","jobs","fg","bg","kill","date","id","pip3","python","time","tree","mount","wait","yes","sudo"]);
 function ls_(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
 function ss_(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-let NEWQ=ls_("vsnew",[]),NIGNL=ls_("vsign",[]),EXTRA=ls_("vsextra",[]);
-function addToList(g,cmd,vi,en,root){
+let NEWQ=ls_("vsnew",[]),NIGNL=ls_("vsign",[]),EXTRA=ls_("vsextra",[]),LIBQ=ls_("vslibs",[]),PATHQ=ls_("vspaths",[]),TECHQ=ls_("vstech",[]);
+let AUTO=(()=>{try{return localStorage.getItem("vsauto")!=="false"}catch(e){return true}})();
+const LEGEND="Tầng / Levels: [1] công nghệ lõi / core technology · [2] công nghệ / technology · [3] kiến trúc / architecture · [4] hệ thống / system · [5] nền tảng / platform · [6] thư viện hoặc gói / library or package · [7] lệnh / command";
+const UNCL="Chưa phân loại / Unclassified";
+const T_UNX=["Unix","Linux + GNU","Nhân + userland / Kernel + userland","Ubuntu (Codespace)"];
+const T_INT=["Internet","TCP/IP","Máy khách–máy chủ / Client–server","Giao thức ứng dụng / Application protocols"];
+const T_CLD=["Điện toán đám mây / Cloud computing","IaaS (hạ tầng như dịch vụ) / Infrastructure as a service","API quản lý REST / REST management API"];
+const T_VCS=["Quản lý phiên bản / Version control","Git (2005)","Phân tán / Distributed"];
+const LNG=(l,m,i)=>["Ngôn ngữ lập trình / Programming languages",l,m,i];
+const T_PY=LNG("Python","Thông dịch bytecode / Bytecode interpreter","CPython"),T_JS=LNG("JavaScript","V8 + vòng lặp sự kiện / V8 and the event loop","Node.js");
+const T_ALG=["Thuật toán và đánh giá thuật toán / Algorithms and evaluation","Phân tích thuật toán / Algorithm analysis"];
+const T_SYS=["Phân tích thiết kế hệ thống / System analysis and design","Khảo sát và mô hình hóa / Survey and modeling","Mô hình client–server / Client–server model","Hệ thống đang chạy / The running system","Công cụ dòng lệnh / CLI tools"];
+const T_AI=["Công nghệ AI / AI technology","Học máy / Machine learning"];
+const GT="Công cụ GNU / GNU tools",LT="Công cụ Linux / Linux tools",AT="Công cụ phân tích / Analysis tools",XT="Công cụ bên thứ ba / Third-party tools",GL="Thư viện GNU / GNU libraries";
+// hồ sơ: khóa là công nghệ gốc cũ trong TK, giá trị là 6 tầng đầu (tầng 7 là lệnh)
+const PF={"GNU coreutils":[...T_UNX,GT,"coreutils"],"GNU Bash":[...T_UNX,"Shell","GNU Bash"],"GNU grep":[...T_UNX,GT,"grep"],"GNU nano":[...T_UNX,GT,"nano"],"Dự án GNU (less)":[...T_UNX,GT,"less"],
+"procps-ng":[...T_UNX,LT,"procps-ng"],"util-linux":[...T_UNX,LT,"util-linux"],"Debian/Ubuntu (gói hostname)":[...T_UNX,LT,"hostname"],
+"iproute2":[...T_UNX,"Mạng Linux / Linux networking","iproute2"],"iputils":[...T_UNX,"Mạng Linux / Linux networking","iputils"],
+"systemd":[...T_UNX,"Dịch vụ hệ thống / System services","systemd"],"Debian (APT)":[...T_UNX,"Quản lý gói Debian / Debian packaging","APT"],"Ubuntu (Canonical)":[...T_UNX,"Công cụ Ubuntu / Ubuntu tools","UFW"],
+"ncurses (Dự án GNU)":[...T_UNX,GL,"ncurses"],"GNU C Library (glibc)":[...T_UNX,GL,"glibc"],
+"strace":[...T_UNX,AT,"strace"],"ltrace":[...T_UNX,AT,"ltrace"],"file (Ian Darwin)":[...T_UNX,AT,"file"],"Vim":[...T_UNX,AT,"xxd (Vim)"],"GNU binutils":[...T_UNX,AT,"GNU binutils"],"GNU time":[...T_UNX,"Công cụ đo / Measuring tools","GNU time"],
+"rsync (Andrew Tridgell)":[...T_UNX,XT,"rsync"],"tmux (Nicholas Marriott)":[...T_UNX,XT,"tmux"],
+"curl (Daniel Stenberg)":[...T_INT,"HTTP","curl"],"OpenSSH (OpenBSD)":[...T_INT,"SSH","OpenSSH"],
+"Amazon Web Services":[...T_CLD,"Amazon Web Services","Dòng lệnh / CLI","AWS CLI"],"Google Cloud":[...T_CLD,"Google Cloud","Dòng lệnh / CLI","gcloud"],"Hetzner Cloud":[...T_CLD,"Hetzner Cloud","Dòng lệnh / CLI","hcloud"],
+"Git (Linus Torvalds)":[...T_VCS,"Kho cục bộ / Local repository","Git CLI","git"],"GitHub":[...T_VCS,"Kho từ xa / Remote hosting","GitHub","GitHub CLI (gh)"],
+"Python (PSF)":[...T_PY,"Runtime CPython","python3"],"Node.js":[...T_JS,"Runtime Node.js","node"],
+"GNU Toolchain":[...LNG("C","Biên dịch ra mã máy / Compile to machine code","GNU Toolchain"),"Biên dịch và gỡ lỗi / Compile and debug","gcc, gdb"]};
+const PFC={pip:[...T_PY,"PyPI + pip","pip"],deactivate:[...T_PY,"Môi trường ảo / Virtual environments","venv"],npm:[...T_JS,"npm registry + npm","npm"]};
+// nền tảng theo trình cài đặt: dùng khi tự thêm thư viện mới
+const MGR={apt:[...T_UNX,"Gói apt / apt packages"],snap:[...T_UNX,"Gói snap / snap packages"],pip:[...T_PY,"PyPI + pip"],npm:[...T_JS,"npm registry + npm"],
+cargo:[...LNG("Rust","Biên dịch ra mã máy / Compile to machine code","Rust toolchain"),"crates.io + cargo"],go:[...LNG("Go","Biên dịch ra mã máy / Compile to machine code","Go toolchain"),"Go modules"],gem:[...LNG("Ruby","Thông dịch / Interpreter","CRuby"),"RubyGems"]};
+function algoPath(c){
+ const E=[...T_ALG,"Thực nghiệm / Empirical","Công cụ đo / Measuring tools"],T=[...T_ALG,"Lý thuyết / Theoretical","Công cụ toán / Math tools"];
+ if(/timeit/.test(c))return[...E,"Python (stdlib)","timeit"];
+ if(/cProfile/.test(c))return[...E,"Python (stdlib)","cProfile"];
+ if(/tracemalloc/.test(c))return[...E,"Python (stdlib)","tracemalloc"];
+ if(/algo\.py/.test(c))return[...T_ALG,"Thực nghiệm / Empirical","Bộ khung đo / Benchmark harness","Python (stdlib)","algo.py"];
+ if(/sympy/i.test(c)&&!/big/i.test(c))return[...T,"Python (PyPI)","SymPy"];
+ if(/big[_-]?o/i.test(c))return[...E,"Python (PyPI)","big_o"];
+ if(/math\.log/.test(c))return[...T,"Python (stdlib)","math và Định lý Master / math and the Master theorem"];
+ return[...E,"GNU userland","GNU time"];
+}
+function pathOfRow(r){
+ if(r[3])return r[3];
+ if(r[0]==="Phân tích thuật toán")return algoPath(r[1]);
+ const b=baseCmd(r[1]),t=TK[b];
+ return PFC[b]||PF[t&&t[0]]||[UNCL];
+}
+function pathOfCmd(c){return pathOfRow(LC.find(x=>x[1]===c)||["",c,"",null])}
+Object.assign(TK,{tree:["Linux userland","Khảo sát hệ thống","vẽ cây thư mục"],pstree:["psmisc","Khảo sát hệ thống","cây tiến trình"],lsof:["lsof","Khảo sát hệ thống","liệt kê file đang mở và kết nối mạng"],"nvidia-smi":["NVIDIA","Phần cứng AI","xem GPU NVIDIA"],ollama:["Ollama","AI cục bộ","chạy mô hình ngôn ngữ cục bộ"]});
+Object.assign(TE,{tree:"draw a folder tree",pstree:"show the process tree",lsof:"list open files and network connections","nvidia-smi":"show NVIDIA GPUs",ollama:"run language models locally"});
+(()=>{const S=(c,d,l)=>["Khảo sát hệ thống",c,d,[...T_SYS,l]],A=(c,d,m,p5,l)=>["Công nghệ AI",c,d,[...T_AI,m,"Hạ tầng huấn luyện và suy luận / Training and inference stack",p5,l]];
+ LC.push(
+ S("tree -L 2 /workspaces/virtual-server","Vẽ cây thư mục dự án 2 tầng / Draw the project folder tree, 2 levels","tree"),
+ S("ps -ef --forest | head -30","Cây tiến trình: ai sinh ra ai / Process tree: who spawned whom","procps-ng"),
+ S("pstree -p | head -30","Cây tiến trình gọn kèm PID / Compact process tree with PIDs","psmisc"),
+ S("lsof -i -P -n | head","Ai đang mở kết nối mạng nào / Which processes hold which network connections","lsof"),
+ S("git log --oneline --graph -10","Lịch sử thay đổi dạng đồ thị / Change history as a graph","git"),
+ A("pip install torch","Cài PyTorch (nặng, vài GB) / Install PyTorch (heavy, several GB)","Học sâu / Deep learning","Python (PyPI)","PyTorch"),
+ A("python3 -c \"import torch; print(torch.__version__, torch.cuda.is_available())\"","Kiểm tra PyTorch và GPU / Check PyTorch and the GPU","Học sâu / Deep learning","Python (PyPI)","PyTorch"),
+ A("pip install transformers","Cài Hugging Face Transformers / Install Hugging Face Transformers","Học sâu / Deep learning","Python (PyPI)","Hugging Face Transformers"),
+ A("python3 -c \"import transformers; print(transformers.__version__)\"","Kiểm tra Transformers / Check Transformers","Học sâu / Deep learning","Python (PyPI)","Hugging Face Transformers"),
+ A("pip install scikit-learn","Cài scikit-learn / Install scikit-learn","Học máy cổ điển / Classical ML","Python (PyPI)","scikit-learn"),
+ A("python3 -c \"import sklearn; print(sklearn.__version__)\"","Kiểm tra scikit-learn / Check scikit-learn","Học máy cổ điển / Classical ML","Python (PyPI)","scikit-learn"),
+ A("nvidia-smi","Xem GPU NVIDIA (cần có GPU) / Show NVIDIA GPUs (needs a GPU)","Học sâu / Deep learning","NVIDIA","nvidia-smi"),
+ A("ollama run tên-mô-hình","Chạy mô hình ngôn ngữ cục bộ (cần cài ollama) / Run a language model locally (needs ollama)","Học sâu / Deep learning","Ollama","ollama"));})();
+const ROOTX=[],TKX=new Set();
+function addToList(g,cmd,vi,en,path){
  const b=baseCmd(cmd);
- TK[b]=[root,g,vi];if(en)TE[b]=en;
- CH[root]=root.split(">").map(x=>x.trim()).filter(Boolean);
- const row=[g,cmd,en?vi+" / "+en:vi];let at=-1;
+ if(!TK[b]){TK[b]=[path[path.length-1]||"",g,vi];TKX.add(b)}
+ if(en&&!TE[b])TE[b]=en;
+ const row=[g,cmd,en?vi+" / "+en:vi,path];let at=-1;
  for(let i=LC.length-1;i>=0;i--)if(LC[i][0]===g){at=i;break}
  if(at<0)LC.push(row);else LC.splice(at+1,0,row);
 }
+function addNode(path){if(!ROOTX.some(p=>p.join(">")===path.join(">")))ROOTX.push(path)}
+function buildTree(){
+ const root={c:new Map(),cmds:[]},put=p=>{let nd=root;for(const n of p){if(!nd.c.has(n))nd.c.set(n,{c:new Map(),cmds:[]});nd=nd.c.get(n)}return nd};
+ LC.forEach((r,i)=>put(pathOfRow(r)).cmds.push(i));ROOTX.forEach(put);return root;
+}
+function cnt(nd){let n=nd.cmds.length;for(const c of nd.c.values())n+=cnt(c);return n}
+function libPaths(user){
+ const out=[];(function w(nd,p){for(const [n,c] of nd.c){const q=p.concat(n);if(q.length===6)out.push(q);else w(c,q)}})(buildTree(),[]);
+ return user?out.filter(p=>ROOTX.some(x=>x.join(">")===p.join(">"))):out;
+}
+function findLib(text,user){
+ const t=text.toLowerCase();let best=null,bl=0;
+ for(const p of libPaths(user)){
+  const nm=p[5].split(" / ")[0].toLowerCase().replace(/[()]/g,"");
+  if(nm.length<3||nm.length<bl)continue;
+  if(new RegExp("(^|[^a-z0-9])"+nm.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"([^a-z0-9]|$)").test(t)){best=p;bl=nm.length}
+ }
+ return best;
+}
+function guessPath(name,ex,mgr){return mgr&&MGR[mgr]?MGR[mgr].concat([name]):(findLib(ex)||[UNCL])}
 function newBadge(){const e=$("nnew");if(e)e.textContent="("+NEWQ.length+")"}
-function noteCmd(cmd){
- const found=[],ins=/(?:^|\s)(?:apt(?:-get)?|pip3?|npm|snap|cargo|gem|go)\s+(?:install|add)\s+(.+)$/.exec(cmd);
- if(ins)ins[1].split(/\s+/).filter(x=>x&&!x.startsWith("-")).forEach(p=>found.push([p,"cài đặt / install",p]));
- const b=baseCmd(cmd);
- if(b&&!TK[b]&&!NIGN.has(b))found.push([b,"đã gõ / typed",cmd]);
+const FHS=[["/proc","thông tin tiến trình và nhân (ảo) / process and kernel info (virtual)"],["/sys","thông tin thiết bị và nhân (ảo) / device and kernel info (virtual)"],["/dev","file đại diện thiết bị / device files"],["/etc","file cấu hình / configuration files"],["/usr/local","phần mềm tự cài / locally installed software"],["/usr/lib","thư viện dùng chung / shared libraries"],["/usr/bin","lệnh người dùng / user commands"],["/usr/sbin","lệnh quản trị / admin commands"],["/usr","chương trình và dữ liệu hệ thống / system programs and data"],["/lib","thư viện dùng chung (.so) / shared libraries"],["/lib64","trình nạp động và thư viện 64-bit / dynamic loader and 64-bit libraries"],["/bin","lệnh người dùng / user commands"],["/sbin","lệnh quản trị / admin commands"],["/var","dữ liệu thay đổi: log, cache / variable data: logs, caches"],["/tmp","file tạm / temporary files"],["/opt","phần mềm cài thêm / optional software"],["/home","thư mục riêng của người dùng / user home directories"],["/root","thư mục riêng của root / root's home"],["/mnt","nơi gắn ổ đĩa / mount points"],["/media","nơi gắn ổ đĩa / mount points"],["/workspaces","thư mục dự án trong Codespace / project folders in Codespaces"]];
+function fhsOf(p){
+ if(p.startsWith("~/"))return["~ (/home)","thư mục chính của bạn / your home directory"];
+ if(p.startsWith("./"))return["./ (thư mục hiện tại)","thư mục hiện tại / the current directory"];
+ return FHS.find(x=>p===x[0]||p.startsWith(x[0]+"/"))||["(khác / other)","ngoài các nhóm chuẩn / outside the standard groups"];
+}
+const TL={apt:"Gói hệ điều hành (cấp thấp) / OS packages (low level)",pip:"Python (cấp cao) / Python (high level)",npm:"Node.js (cấp cao) / Node.js (high level)",cargo:"Rust (từ thấp đến trung) / Rust (low to mid level)",go:"Go (cấp trung) / Go (mid level)",gem:"Ruby (cấp cao) / Ruby (high level)",snap:"Ứng dụng đóng gói Snap / Snap packaged apps"};
+const LIBINFO={"libc.so":"thư viện C chuẩn (glibc): open, read, malloc, printf / the GNU C Library: open, read, malloc, printf","libm.so":"toán học: sin, cos, sqrt / math: sin, cos, sqrt","libpthread":"luồng POSIX (thread) / POSIX threads","libdl":"nạp thư viện lúc chạy (dlopen) / load libraries at run time (dlopen)","ld-linux":"trình nạp động: nạp các .so khi chương trình khởi động / the dynamic linker: loads .so files at startup","linux-vdso":"vDSO: thư viện ảo do nhân cung cấp để gọi hệ thống nhanh / virtual library from the kernel for fast system calls","libstdc++":"thư viện chuẩn C++ / the C++ standard library","libgcc_s":"hỗ trợ lúc chạy của GCC / GCC runtime support","libz.so":"nén zlib / zlib compression","libssl":"OpenSSL: mã hóa TLS / OpenSSL: TLS encryption","libcrypto":"OpenSSL: thuật toán mã hóa / OpenSSL: cryptographic algorithms","libreadline":"chỉnh sửa dòng lệnh / command-line editing","libncurses":"điều khiển màn hình terminal / terminal screen control","libtinfo":"thông tin terminal / terminal capability info","libpython3":"trình thông dịch Python dạng thư viện / the Python interpreter as a library","libselinux":"SELinux: kiểm soát truy cập / access control","libpcre":"biểu thức chính quy / regular expressions"};
+function noteTech(mgr,pkg){
+ if(/[\/=<>]|\.txt$|\.whl$/.test(pkg))return;
+ const k=mgr.replace("pip3","pip").replace("apt-get","apt");
+ if(TECHQ.find(x=>x.mgr===k&&x.name===pkg))return;
+ TECHQ.push({mgr:k,name:pkg});ss_("vstech",TECHQ);
+}
+function notePaths(cmd){
  let ch=false;
- for(const [name,kind,ex] of found){
-  if(TK[name]||NIGNL.includes(name))continue;
-  const o=NEWQ.find(x=>x.base===name);
-  if(o){o.n++;o.src=cmd}else NEWQ.push({base:name,kind,ex,src:cmd,n:1});
+ for(const t of tok(cmd)){
+  const p=t.replace(/^['"]|['"]$/g,"").replace(/^[^\/~.]*=/,"");
+  if(!/^(\/|~\/|\.\/)[\w.\/@+-]*$/.test(p)||p==="/"||p.length>120)continue;
+  let o=PATHQ.find(x=>x.p===p);
+  if(!o){if(PATHQ.length>=300)continue;o={p,n:0};PATHQ.push(o)}
+  o.n++;ch=true;
+ }
+ if(ch)ss_("vspaths",PATHQ);
+}
+function parseLibs(cmd,text){
+ const prog=(tok(cmd).filter(t=>!t.startsWith("-")).slice(1)[0]||baseCmd(cmd)).replace(/^['"]|['"]$/g,"");
+ const re=/(?:\[|\s|^)((?:[\w.\/+-]*\/)?(lib[\w+.-]*\.so[\w.]*|ld-linux[\w.-]*\.so[\w.]*|linux-vdso\.so[\w.]*))/g;
+ let m,ch=false;
+ while((m=re.exec(text))){
+  const full=m[1],name=m[2],path=full.includes("/")?full:"";
+  let o=LIBQ.find(x=>x.name===name);
+  if(!o){if(LIBQ.length>=300)continue;o={name,path:"",progs:[],n:0};LIBQ.push(o)}
+  o.n++;if(path&&!o.path)o.path=path;
+  if(prog&&!o.progs.includes(prog)&&o.progs.length<8)o.progs.push(prog);
   ch=true;
  }
- if(ch){ss_("vsnew",NEWQ);newBadge();const nw=$("nw");if(nw&&!nw.classList.contains("hide"))renderNew()}
+ if(ch){ss_("vslibs",LIBQ);if(LV!=="cmd")renderLearn()}
 }
+function capOut(cmd,y){
+ if(!["ldd","readelf","objdump","cat","strace","ltrace","ldconfig","nm","pmap","grep","less","head","tail"].includes(baseCmd(cmd)))return;
+ setTimeout(()=>{try{
+  const b=term.buffer.active,end=b.baseY+b.cursorY;let t="";
+  for(let k=y+1;k<=Math.min(end,y+400);k++){const l=b.getLine(k);if(!l)continue;const x=l.translateToString(true);if(/^.*?\s[$#]\s/.test(x))break;t+=x+"\n"}
+  parseLibs(cmd,t);
+ }catch(e){}},2500);
+}
+function autoAdd(f){
+ const path=guessPath(f.name,f.ex,f.mgr);
+ if(f.mgr){addNode(path);EXTRA.push({node:true,path,auto:true})}
+ else addRow(f.ex,path);
+ ss_("vsextra",EXTRA);
+}
+function addRow(cmd,path){
+ const g="Tự thêm / Auto-added",vi="(tự thêm lúc chạy, chưa có mô tả)",en="auto-added at run time, no description yet";
+ addToList(g,cmd,vi,en,path);EXTRA.push({g,cmd,vi,en,path,auto:true});
+}
+function noteCmd(cmd){
+ const found=[],ins=/(?:^|\s)(apt(?:-get)?|pip3?|npm|snap|cargo|gem|go)\s+(?:install|add)\s+(.+)$/.exec(cmd);
+ if(ins){const mgr=ins[1].replace("pip3","pip").replace("apt-get","apt");
+  ins[2].split(/\s+/).filter(x=>x&&!x.startsWith("-")).forEach(p=>{noteTech(ins[1],p);if(!/[\/=<>]|\.txt$|\.whl$/.test(p))found.push({name:p,kind:"cài đặt / install",ex:p,mgr})})}
+ const b=baseCmd(cmd);
+ if(b&&!TK[b]&&!NIGN.has(b))found.push({name:b,kind:"đã gõ / typed",ex:cmd,mgr:""});
+ notePaths(cmd);
+ let ch=false,added=false;
+ for(const f of found){
+  if(NIGNL.includes(f.name))continue;
+  if(f.mgr?(TK[f.name]||hasLib(f.name,f.mgr)):TK[f.name])continue;
+  if(AUTO){autoAdd(f);added=true;continue}
+  const o=NEWQ.find(x=>x.base===f.name);
+  if(o){o.n++;o.src=cmd}else NEWQ.push({base:f.name,kind:f.kind,ex:f.ex,mgr:f.mgr,src:cmd,n:1});
+  ch=true;
+ }
+ // dòng lệnh dùng một thư viện bạn đã thêm: gắn vào thư viện đó
+ if(AUTO&&!LC.some(x=>x[1]===cmd)){const ul=findLib(cmd,true);if(ul){addRow(cmd,ul);ss_("vsextra",EXTRA);added=true}}
+ if(ch)ss_("vsnew",NEWQ);
+ newBadge();
+ if(added||ch){const nw=$("nw");if(nw&&!nw.classList.contains("hide"))renderNew();if(added){renderLearn();renderLP()}}
+ else if(LV!=="cmd")renderLearn();
+}
+function hasLib(name,mgr){const n=name.toLowerCase(),pre=mgr&&MGR[mgr]?MGR[mgr].join(">"):null;return libPaths().some(p=>p[5].split(" / ")[0].toLowerCase()===n&&(!pre||p.slice(0,5).join(">")===pre))}
 function noteLine(){
  try{
   if(!term)return;
   const b=term.buffer.active,y=b.baseY+b.cursorY;let st=y,txt="";
   while(st>0&&b.getLine(st)&&b.getLine(st).isWrapped)st--;
   for(let k=st;k<=y;k++){const l=b.getLine(k);if(l)txt+=l.translateToString(k<y)}
-  const m=/^.*?\s[$#]\s+(.*\S)\s*$/.exec(txt);if(m)noteCmd(m[1]);
+  const m=/^.*?\s[$#]\s+(.*\S)\s*$/.exec(txt);
+  if(m){noteCmd(m[1]);capOut(m[1],y)}
  }catch(e){}
 }
+function removeFromList(cmd){const i=LC.findIndex(x=>x[1]===cmd);if(i>=0)LC.splice(i,1);const b=baseCmd(cmd);if(TKX.has(b)&&!LC.some(x=>baseCmd(x[1])===b)){delete TK[b];TKX.delete(b)}}
+function setAuto(v){AUTO=v;try{localStorage.setItem("vsauto",String(v))}catch(e){}}
+const parsePath=v=>v.split(">").map(x=>x.trim()).filter(Boolean).slice(0,6);
+function autoUpdate(i){
+ const x=EXTRA[i];if(!x||x.node)return;
+ removeFromList(x.cmd);
+ x.path=parsePath($("ar"+i).value);if(!x.path.length)x.path=[UNCL];x.vi=$("av"+i).value.trim()||"(chưa có mô tả)";x.en=$("ae"+i).value.trim();
+ addToList(x.g,x.cmd,x.vi,x.en,x.path);ss_("vsextra",EXTRA);renderNew();renderLearn();renderLP();
+}
+function autoRemove(i){
+ const x=EXTRA[i];if(!x)return;
+ if(x.node){const k=ROOTX.findIndex(p=>p.join(">")===x.path.join(">"));if(k>=0)ROOTX.splice(k,1)}
+ else{removeFromList(x.cmd);NIGNL.push(baseCmd(x.cmd));ss_("vsign",NIGNL)}
+ EXTRA.splice(i,1);ss_("vsextra",EXTRA);renderNew();renderLearn();renderLP();
+}
+function manualAdd(){
+ const path=parsePath($("mp").value);
+ if(!path.length){$("mmsg").textContent="Cần nhập đường dẫn cây. / A tree path is required.";return}
+ const cmds=$("mc").value.split("\n").map(x=>x.trim()).filter(Boolean),vi=$("mv").value.trim()||"(thêm tay)",en=$("me").value.trim();
+ if(!cmds.length){addNode(path);EXTRA.push({node:true,path})}
+ else cmds.forEach(c=>{addToList("Thêm tay / Manual",c,vi,en,path);EXTRA.push({g:"Thêm tay / Manual",cmd:c,vi,en,path})});
+ ss_("vsextra",EXTRA);["mp","mc","mv","me"].forEach(id=>$(id).value="");
+ $("mmsg").textContent="Đã thêm. / Added.";renderNew();renderLearn();renderLP();
+}
 function renderNew(){
- const box=$("nwb");
- if(!NEWQ.length){box.innerHTML="<p class='sub'>Chưa có mục mới. / Nothing new yet.</p>";return}
- box.innerHTML=NEWQ.map((x,i)=>`<details style="padding:8px 0;border-bottom:1px solid var(--bd)"><summary><code>${esc(x.base)}</code><span class="sub"> — ${esc(x.kind)} · ${x.n}×</span></summary><div class="sub" style="margin-top:6px">Command_text</div><code style="display:block;word-break:break-all">${esc(x.ex)}</code><div class="sub" style="margin-top:8px">Learn_text</div><pre style="overflow:auto;font-size:12px;margin:4px 0">${esc(learnText(x.ex))}</pre><input id="nr${i}" placeholder="Công nghệ gốc / Core technology (ngăn cách bằng >, ví dụ: Python > Flask)" style="width:100%;margin-top:6px"><input id="ng${i}" placeholder="Nhóm / Group" value="Mới / New" style="width:100%;margin-top:6px"><input id="nv${i}" placeholder="Mô tả tiếng Việt" style="width:100%;margin-top:6px"><input id="ne${i}" placeholder="English description" style="width:100%;margin-top:6px"><div class="row" style="margin-top:8px"><button class="btn pri" onclick="newApprove(${i})">Duyệt và thêm / Approve &amp; add</button><button class="btn" onclick="newDismiss(${i})">Bỏ qua / Dismiss</button></div></details>`).join("");
+ const inp=(id,ph,v)=>`<input id="${id}" placeholder="${ph}" value="${esc(v||"")}" style="width:100%;margin-top:6px">`;
+ let h=NEWQ.length?"":"<p class='sub'>Chưa có mục chờ duyệt (khi tắt Tự thêm, mục mới sẽ chờ ở đây). / Nothing waiting for review (when Auto-add is off, new items wait here).</p>";
+ h+=NEWQ.map((x,i)=>`<details style="padding:8px 0;border-bottom:1px solid var(--bd)"><summary><code>${esc(x.base)}</code><span class="sub"> — ${esc(x.kind)} · ${x.n}×</span></summary><div class="sub" style="margin-top:6px">Command_text</div><code style="display:block;word-break:break-all">${esc(x.ex)}</code>${inp("nr"+i,"Đường dẫn cây / Tree path (&gt; giữa các tầng, tối đa 6)",guessPath(x.base,x.ex,x.mgr).join(" > "))}${inp("nv"+i,"Mô tả tiếng Việt","")}${inp("ne"+i,"English description","")}<div class="row" style="margin-top:8px"><button class="btn pri" onclick="newApprove(${i})">Duyệt và thêm / Approve &amp; add</button><button class="btn" onclick="newDismiss(${i})">Bỏ qua / Dismiss</button></div></details>`).join("");
+ const au=EXTRA.map((x,i)=>[x,i]).filter(p=>p[0].auto);
+ h+=`<h2 style="margin:14px 0 6px">Đã tự thêm / Auto-added (${au.length})</h2>`+(au.length?au.map(([x,i])=>x.node?`<details style="padding:8px 0;border-bottom:1px solid var(--bd)"><summary>${esc(x.path.join(" › "))}</summary><div class="row" style="margin-top:8px"><button class="btn" onclick="autoRemove(${i})">Xóa / Remove</button></div></details>`:`<details style="padding:8px 0;border-bottom:1px solid var(--bd)"><summary><code>${esc(x.cmd)}</code></summary>${inp("ar"+i,"Đường dẫn cây / Tree path (&gt;)",x.path.join(" > "))}${inp("av"+i,"Mô tả tiếng Việt",x.vi)}${inp("ae"+i,"English description",x.en)}<div class="row" style="margin-top:8px"><button class="btn pri" onclick="autoUpdate(${i})">Cập nhật / Update</button><button class="btn" onclick="autoRemove(${i})">Xóa / Remove</button></div></details>`).join(""):"<p class='sub'>Chưa có. / None yet.</p>");
+ $("nwb").innerHTML=h;
 }
 function newApprove(i){
  const x=NEWQ[i];if(!x)return;
- const root=$("nr"+i).value.trim()||"Công nghệ mới / New technology",g=$("ng"+i).value.trim()||"Mới / New",vi=$("nv"+i).value.trim()||"(chưa có mô tả)",en=$("ne"+i).value.trim();
- addToList(g,x.ex,vi,en,root);EXTRA.push({g,cmd:x.ex,vi,en,root});ss_("vsextra",EXTRA);
- NEWQ.splice(i,1);ss_("vsnew",NEWQ);newBadge();renderNew();renderLearn();
+ let path=parsePath($("nr"+i).value);if(!path.length)path=[UNCL];
+ const vi=$("nv"+i).value.trim()||"(chưa có mô tả)",en=$("ne"+i).value.trim();
+ if(x.mgr){addNode(path);EXTRA.push({node:true,path})}
+ else{addToList("Mới / New",x.ex,vi,en,path);EXTRA.push({g:"Mới / New",cmd:x.ex,vi,en,path})}
+ ss_("vsextra",EXTRA);NEWQ.splice(i,1);ss_("vsnew",NEWQ);newBadge();renderNew();renderLearn();renderLP();
 }
 function newDismiss(i){const x=NEWQ[i];if(!x)return;NIGNL.push(x.base);ss_("vsign",NIGNL);NEWQ.splice(i,1);ss_("vsnew",NEWQ);newBadge();renderNew()}
-EXTRA.forEach(x=>addToList(x.g,x.cmd,x.vi,x.en,x.root));newBadge();
+EXTRA.forEach(x=>{
+ if(!x.path)x.path=(x.root&&!/^Công nghệ mới/.test(x.root))?x.root.split(">").map(t=>t.trim()).filter(Boolean):[UNCL];
+ if(x.node)addNode(x.path);else addToList(x.g,x.cmd,x.vi,x.en,x.path);
+});newBadge();$("nauto").checked=AUTO;
 document.querySelector('#nav button[data-t="nw"]').addEventListener("click",renderNew);
+let LV="tree";
+const LIB_TREE=`Unix / ELF — định dạng file chạy được trên Linux / the executable file format on Linux
+└─ Liên kết động / Dynamic linking — nối chương trình với thư viện lúc chạy / join a program to libraries at run time
+   ├─ ld.so (trình nạp động / dynamic linker) — tìm và nạp các .so khi chương trình khởi động / finds and loads .so files at startup
+   │  ├─ LD_LIBRARY_PATH — thư mục tìm .so thêm / extra directories to search
+   │  ├─ /etc/ld.so.conf + ldconfig — danh sách thư mục và bộ nhớ đệm / directory list and cache
+   │  └─ RPATH / RUNPATH — đường dẫn tìm .so nhúng sẵn trong file / search path embedded in the file
+   ├─ dlopen / dlsym — nạp thư viện bằng mã khi đang chạy / load libraries from code at run time
+   ├─ PLT / GOT — bảng nhảy để gọi hàm trong .so / jump tables for calling functions in a .so
+   └─ Công cụ / Tools: ldd, readelf -d, objdump -p, nm -D, LD_DEBUG=libs, ltrace`;
+const FS_TREE=`Unix / FHS (Filesystem Hierarchy Standard) — chuẩn cây thư mục Linux / the Linux directory standard
+└─ / — gốc của mọi thứ / the root of everything
+${FHS.map((f,i)=>(i===FHS.length-1?"   └─ ":"   ├─ ")+f[0]+" — "+f[1]).join("\n")}`;
+const MMAP_TREE=`Nhân Linux / Linux kernel — bộ nhớ ảo / virtual memory
+└─ mmap — ánh xạ file hoặc bộ nhớ vào không gian địa chỉ / map files or memory into the address space
+   ├─ /proc/PID/maps — xem các vùng đã ánh xạ của một tiến trình / view a process's mapped regions
+   │  └─ cột / columns: địa chỉ / address · quyền / perms (r w x p) · offset · thiết bị / device · inode · đường dẫn / path
+   ├─ mỗi tiến trình ánh xạ các .so của nó vào bộ nhớ / each process maps its .so files into memory
+   └─ lệnh / commands: cat /proc/self/maps, pmap PID, ldd ./tên`;
+const DEV_TREE=`Cấp cao → cấp thấp / High level → low level
+Ứng dụng của bạn / Your application (virtual-server)
+└─ Giao diện web (HTML, CSS, JS) — chạy trong trình duyệt / runs in the browser
+   └─ HTTP và WebSocket — liên lạc trình duyệt ↔ backend / browser ↔ backend
+      └─ Backend Node.js (Express) — chạy trên Render / runs on Render
+         ├─ Thư viện Node (ssh2, ws, pg) / Node libraries
+         └─ Runtime Node.js (V8) — chạy JavaScript / runs JavaScript
+            └─ Thư viện C (glibc, libuv) và các .so / the C library and .so files
+               └─ Lời gọi hệ thống / System calls: open, read, write, mmap, socket
+                  └─ Nhân Linux / Linux kernel: VFS, bộ lập lịch, bộ nhớ ảo, ngăn xếp mạng / scheduler, virtual memory, network stack
+                     └─ Phần cứng / Hardware: CPU, RAM, đĩa, card mạng / disk, network card`;
+const SYSD_TREE=`Thiết kế hệ thống / System design — virtual-server
+└─ Kiểu client–server / client–server style
+   ├─ Client: trình duyệt (giao diện) / browser (UI)
+   ├─ Server: backend Node.js trên Render / Node.js backend on Render
+   │  ├─ Không giữ trạng thái / stateless: dữ liệu nằm ở Neon / data lives in Neon
+   │  ├─ Cổng API / API gateway: kiểm tra mật khẩu, giới hạn số máy / password check, machine limit
+   │  └─ Tích hợp ngoài / external integrations: API của nhà cung cấp cloud / cloud provider APIs
+   ├─ Dữ liệu / Data: Postgres (Neon)
+   └─ Triển khai / Deploy: git push → Render tự build và chạy / Render builds and runs (simple CI/CD)`;
+function libTree(){
+ if(!LIBQ.length)return"(chưa có. Chạy ldd ./tên trong SSH thật để ứng dụng tự ghi / none yet. Run ldd ./name in the SSH tab and the app records it)";
+ const L=["Thư viện động đã gặp / Shared libraries seen"];
+ LIBQ.forEach((o,i)=>{
+  const last=i===LIBQ.length-1,k=Object.keys(LIBINFO).find(x=>o.name.startsWith(x)),pad=last?"   ":"│  ";
+  L.push((last?"└─ ":"├─ ")+o.name+" — "+(k?LIBINFO[k]:"(chưa có mô tả / no description yet)")+"  ("+o.n+"×)");
+  if(o.path)L.push(pad+"├─ đường dẫn / path: "+o.path);
+  L.push(pad+"└─ dùng bởi / used by: "+(o.progs.join(", ")||"?"));
+ });
+ return L.join("\n");
+}
+function pathTree(){
+ if(!PATHQ.length)return"(chưa có. Dùng đường dẫn trong lệnh ở SSH thật để ứng dụng tự ghi / none yet. Use paths in commands in the SSH tab and the app records them)";
+ const g={};PATHQ.forEach(o=>{const f=fhsOf(o.p);(g[f[0]]=g[f[0]]||{d:f[1],a:[]}).a.push(o)});
+ const ks=Object.keys(g),L=["Đường dẫn bạn đã dùng / Paths you used"];
+ ks.forEach((k,i)=>{const last=i===ks.length-1,pad=last?"   ":"│  ";L.push((last?"└─ ":"├─ ")+k+" — "+g[k].d);g[k].a.forEach((o,j)=>L.push(pad+(j===g[k].a.length-1?"└─ ":"├─ ")+o.p+"  ("+o.n+"×)"))});
+ return L.join("\n");
+}
+function techTree(){
+ if(!TECHQ.length)return"(chưa có. Cài bằng apt, pip, npm... trong SSH thật để ứng dụng tự ghi / none yet. Install with apt, pip, npm... in the SSH tab and the app records it)";
+ const ms=[...new Set(TECHQ.map(x=>x.mgr))],L=["Công nghệ đã cài / Installed technologies"];
+ ms.forEach((m,i)=>{const last=i===ms.length-1,pad=last?"   ":"│  ",a=TECHQ.filter(x=>x.mgr===m);L.push((last?"└─ ":"├─ ")+(TL[m]||m)+" ["+m+"]");a.forEach((x,j)=>L.push(pad+(j===a.length-1?"└─ ":"├─ ")+x.name))});
+ return L.join("\n");
+}
+const pre_=t=>`<pre style="overflow:auto;font-size:12px;margin:6px 0">${esc(t)}</pre>`,h2_=t=>`<h2 style="margin:14px 0 6px">${esc(t)}</h2>`;
+function learnView(v){
+ LV=v;$("lq").style.display=(v==="cmd"||v==="tree")?"":"none";
+ document.querySelectorAll("#lsub button").forEach(b=>b.classList.toggle("pri",b.dataset.v===v));
+ renderLearn();
+}
+function cmdLeaf(i,depth){
+ const r=LC[i];
+ return `<details style="margin-left:${depth>1?10:0}px;padding:4px 0"><summary><span class="sub">[${depth}]</span> <code>${esc(r[1])}</code><span class="sub"> — ${esc(r[2])}</span></summary><div class="sub" style="margin-top:6px">Command_text</div><code style="display:block;word-break:break-all">${esc(r[1])}</code><div class="sub" style="margin-top:8px">Learn_text</div>${pre_(learnText(r[1]))}</details>`;
+}
+function treeHtml(nd,depth,q){
+ let h="";
+ for(const [name,c] of nd.c){
+  const inner=treeHtml(c,depth+1,q),leaves=c.cmds.filter(i=>!q||lcHay(i).includes(q)).map(i=>cmdLeaf(i,depth+1)).join("");
+  if(q&&!inner&&!leaves)continue;
+  h+=`<details ${q?"open":""} style="margin-left:${depth>1?10:0}px;padding:3px 0"><summary><span class="sub">[${depth}]</span> <b>${esc(name)}</b> <span class="sub">(${cnt(c)})</span></summary>${inner}${leaves}</details>`;
+ }
+ return h;
+}
+function viewTree(){
+ const q=$("lq").value.trim().toLowerCase();
+ return `<p class="sub">${esc(LEGEND)}</p>`+(treeHtml(buildTree(),1,q)||"<p class='sub'>Không có lệnh phù hợp. / No matching commands.</p>");
+}
+function treeText(nd,depth,pre,L){
+ const ks=Array.from(nd.c.keys());
+ ks.forEach((k,j)=>{const c=nd.c.get(k),last=j===ks.length-1;L.push(pre+(last?"└─ ":"├─ ")+"["+depth+"] "+k+"  ("+cnt(c)+")");treeText(c,depth+1,pre+(last?"   ":"│  "),L)});
+}
+function grpText(){const L=["Cây công nghệ đã nhóm / Grouped technology tree"];treeText(buildTree(),1,"",L);return L.join("\n")}
+let GRPN=0;
+function regroup(){
+ let n=0;
+ LC.forEach(r=>{const p=pathOfRow(r);if(p.length===1&&p[0]===UNCL){const lib=findLib(r[1]);if(lib){r[3]=lib;n++;const e=EXTRA.find(x=>x.cmd===r[1]);if(e)e.path=lib}}});
+ if(n)ss_("vsextra",EXTRA);return n;
+}
+function autoGroupGo(){GRPN=regroup();learnView("grp")}
+function viewGrp(){
+ return `<p class="sub">${esc(LEGEND)}</p><p class="sub">Đã nhóm lại / Regrouped: ${GRPN} · Nhánh gốc / Roots: ${buildTree().c.size} · Thư viện / Libraries: ${libPaths().length} · Lệnh / Commands: ${LC.length}</p><div class="row"><button class="btn pri" onclick="grpCopy()">Chép cây / Copy tree</button></div><p id="gm" class="sub"></p>${pre_(grpText())}`;
+}
+function grpCopy(){const m=$("gm");(navigator.clipboard?navigator.clipboard.writeText(grpText()):Promise.reject()).then(()=>{m.textContent="Đã chép. / Copied."},()=>{m.textContent="Không chép được, hãy chọn chữ trong khung. / Could not copy, select the text below."})}
 function renderLearn(){
+ if(LV==="cmd")return renderCmds();
+ if(LV==="tree"){$("lb").innerHTML=viewTree();return}
+ if(LV==="grp"){$("lb").innerHTML=viewGrp();return}
+ $("lb").innerHTML=LV==="libs"?h2_("Khái niệm / Concept")+pre_(LIB_TREE)+h2_("Tự ghi khi chạy / Auto-recorded at run time")+pre_(libTree())
+  :LV==="fs"?h2_("Cây thư mục Linux / Linux directory tree")+pre_(FS_TREE)+h2_("Ánh xạ file vào bộ nhớ / Memory mapping")+pre_(MMAP_TREE)+h2_("Tự ghi khi chạy / Auto-recorded at run time")+pre_(pathTree())
+  :h2_("Từ cấp cao đến cấp thấp / High to low level")+pre_(DEV_TREE)+h2_("Thiết kế hệ thống / System design")+pre_(SYSD_TREE)+h2_("Tự ghi khi chạy / Auto-recorded at run time")+pre_(techTree());
+}
+function renderCmds(){
  const q=$("lq").value.trim().toLowerCase();let cat="",h="";
  for(let i=0;i<LC.length;i++){
   if(q&&!lcHay(i).includes(q))continue;
