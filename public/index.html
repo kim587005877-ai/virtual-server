@@ -648,7 +648,7 @@ const PF={"GNU coreutils":[...T_UNX,GT,"coreutils"],"GNU Bash":[...T_UNX,"Shell"
 "GNU Toolchain":[...LNG("C","Biên dịch ra mã máy / Compile to machine code","GNU Toolchain"),"Biên dịch và gỡ lỗi / Compile and debug","gcc, gdb"]};
 const PFC={pip:[...T_PY,"PyPI + pip","pip"],deactivate:[...T_PY,"Môi trường ảo / Virtual environments","venv"],npm:[...T_JS,"npm registry + npm","npm"]};
 // nền tảng theo trình cài đặt: dùng khi tự thêm thư viện mới
-const MGR={apt:[...T_UNX,"Gói apt / apt packages"],snap:[...T_UNX,"Gói snap / snap packages"],pip:[...T_PY,"PyPI + pip"],npm:[...T_JS,"npm registry + npm"],
+const MGR={apt:[...T_UNX,"Gói apt / apt packages"],snap:[...T_UNX,"Gói snap / snap packages"],script:[...T_UNX,"Cài bằng script / Script installs"],pip:[...T_PY,"PyPI + pip"],npm:[...T_JS,"npm registry + npm"],
 cargo:[...LNG("Rust","Biên dịch ra mã máy / Compile to machine code","Rust toolchain"),"crates.io + cargo"],go:[...LNG("Go","Biên dịch ra mã máy / Compile to machine code","Go toolchain"),"Go modules"],gem:[...LNG("Ruby","Thông dịch / Interpreter","CRuby"),"RubyGems"]};
 function algoPath(c){
  const E=[...T_ALG,"Thực nghiệm / Empirical","Công cụ đo / Measuring tools"],T=[...T_ALG,"Lý thuyết / Theoretical","Công cụ toán / Math tools"];
@@ -665,7 +665,8 @@ function pathOfRow(r){
  if(r[3])return r[3];
  if(r[0]==="Phân tích thuật toán")return algoPath(r[1]);
  const b=baseCmd(r[1]),t=TK[b];
- return PFC[b]||PF[t&&t[0]]||[UNCL];
+ const q=LC.find(x=>x[3]&&baseCmd(x[1])===b);
+ return PFC[b]||PF[t&&t[0]]||(q&&q[3])||[UNCL];
 }
 function pathOfCmd(c){return pathOfRow(LC.find(x=>x[1]===c)||["",c,"",null])}
 Object.assign(TK,{tree:["Linux userland","Khảo sát hệ thống","vẽ cây thư mục"],pstree:["psmisc","Khảo sát hệ thống","cây tiến trình"],lsof:["lsof","Khảo sát hệ thống","liệt kê file đang mở và kết nối mạng"],"nvidia-smi":["NVIDIA","Phần cứng AI","xem GPU NVIDIA"],ollama:["Ollama","AI cục bộ","chạy mô hình ngôn ngữ cục bộ"]});
@@ -685,6 +686,17 @@ Object.assign(TE,{tree:"draw a folder tree",pstree:"show the process tree",lsof:
  A("python3 -c \"import sklearn; print(sklearn.__version__)\"","Kiểm tra scikit-learn / Check scikit-learn","Học máy cổ điển / Classical ML","Python (PyPI)","scikit-learn"),
  A("nvidia-smi","Xem GPU NVIDIA (cần có GPU) / Show NVIDIA GPUs (needs a GPU)","Học sâu / Deep learning","NVIDIA","nvidia-smi"),
  A("ollama run tên-mô-hình","Chạy mô hình ngôn ngữ cục bộ (cần cài ollama) / Run a language model locally (needs ollama)","Học sâu / Deep learning","Ollama","ollama"));})();
+Object.assign(TK,{elan:["elan","Quản lý phiên bản Lean","quản lý các phiên bản Lean"],lake:["Lake","Build Lean","công cụ build của Lean"],lean:["Lean 4","Trình biên dịch","biên dịch và kiểm tra file Lean"]});
+Object.assign(TE,{elan:"manage Lean versions",lake:"the Lean build tool",lean:"compile and check Lean files"});
+(()=>{const P=l=>["Ngôn ngữ lập trình / Programming languages","Lean 4","Chứng minh định lý và lập trình hàm / Theorem proving and functional programming","Lean 4","elan + Lake",l],R=(c,d,l)=>["Lean 4",c,d,P(l)],LN="Lean (trình biên dịch / compiler)";
+ LC.push(
+ R("elan --version","Xem phiên bản elan, trình quản lý phiên bản Lean / Show the elan version (the Lean version manager)","elan"),
+ R("elan show","Xem các bộ công cụ Lean đã cài / Show the installed Lean toolchains","elan"),
+ R("lean --version","Xem phiên bản trình biên dịch Lean / Show the Lean compiler version",LN),
+ R("lean tên.lean","Biên dịch và kiểm tra một file Lean / Compile and check a Lean file",LN),
+ R("lake --version","Xem phiên bản Lake, công cụ build / Show the Lake (build tool) version","Lake"),
+ R("lake new tên-dự-án","Tạo dự án Lean mới / Create a new Lean project","Lake"),
+ R("lake build","Build dự án Lean / Build the Lean project","Lake"));})();
 const ROOTX=[],TKX=new Set();
 function addToList(g,cmd,vi,en,path){
  const b=baseCmd(cmd);
@@ -721,7 +733,7 @@ function fhsOf(p){
  if(p.startsWith("./"))return["./ (thư mục hiện tại)","thư mục hiện tại / the current directory"];
  return FHS.find(x=>p===x[0]||p.startsWith(x[0]+"/"))||["(khác / other)","ngoài các nhóm chuẩn / outside the standard groups"];
 }
-const TL={apt:"Gói hệ điều hành (cấp thấp) / OS packages (low level)",pip:"Python (cấp cao) / Python (high level)",npm:"Node.js (cấp cao) / Node.js (high level)",cargo:"Rust (từ thấp đến trung) / Rust (low to mid level)",go:"Go (cấp trung) / Go (mid level)",gem:"Ruby (cấp cao) / Ruby (high level)",snap:"Ứng dụng đóng gói Snap / Snap packaged apps"};
+const TL={apt:"Gói hệ điều hành (cấp thấp) / OS packages (low level)",pip:"Python (cấp cao) / Python (high level)",npm:"Node.js (cấp cao) / Node.js (high level)",cargo:"Rust (từ thấp đến trung) / Rust (low to mid level)",go:"Go (cấp trung) / Go (mid level)",gem:"Ruby (cấp cao) / Ruby (high level)",snap:"Ứng dụng đóng gói Snap / Snap packaged apps",script:"Cài bằng script / Script installs"};
 const LIBINFO={"libc.so":"thư viện C chuẩn (glibc): open, read, malloc, printf / the GNU C Library: open, read, malloc, printf","libm.so":"toán học: sin, cos, sqrt / math: sin, cos, sqrt","libpthread":"luồng POSIX (thread) / POSIX threads","libdl":"nạp thư viện lúc chạy (dlopen) / load libraries at run time (dlopen)","ld-linux":"trình nạp động: nạp các .so khi chương trình khởi động / the dynamic linker: loads .so files at startup","linux-vdso":"vDSO: thư viện ảo do nhân cung cấp để gọi hệ thống nhanh / virtual library from the kernel for fast system calls","libstdc++":"thư viện chuẩn C++ / the C++ standard library","libgcc_s":"hỗ trợ lúc chạy của GCC / GCC runtime support","libz.so":"nén zlib / zlib compression","libssl":"OpenSSL: mã hóa TLS / OpenSSL: TLS encryption","libcrypto":"OpenSSL: thuật toán mã hóa / OpenSSL: cryptographic algorithms","libreadline":"chỉnh sửa dòng lệnh / command-line editing","libncurses":"điều khiển màn hình terminal / terminal screen control","libtinfo":"thông tin terminal / terminal capability info","libpython3":"trình thông dịch Python dạng thư viện / the Python interpreter as a library","libselinux":"SELinux: kiểm soát truy cập / access control","libpcre":"biểu thức chính quy / regular expressions"};
 function noteTech(mgr,pkg){
  if(/[\/=<>]|\.txt$|\.whl$/.test(pkg))return;
@@ -772,17 +784,25 @@ function addRow(cmd,path){
  const g="Tự thêm / Auto-added",vi="(tự thêm lúc chạy, chưa có mô tả)",en="auto-added at run time, no description yet";
  addToList(g,cmd,vi,en,path);EXTRA.push({g,cmd,vi,en,path,auto:true});
 }
+function scriptName(u){
+ try{const x=new URL(u),parts=x.pathname.split("/").filter(Boolean);let seg=(parts.pop()||"").replace(/\.(sh|bash)$/,"").replace(/[-_.]?(init|install|installer|setup|get)[-_.]?/g,"-").replace(/^-+|-+$/g,"");
+  if(!seg&&/githubusercontent/.test(x.hostname))seg=parts[1]||"";
+  const host=x.hostname.split(".").filter(h=>!["www","raw","get","install","sh"].includes(h))[0]||"";
+  return(seg||host).toLowerCase();}catch(e){return""}
+}
 function noteCmd(cmd){
  const found=[],ins=/(?:^|\s)(apt(?:-get)?|pip3?|npm|snap|cargo|gem|go)\s+(?:install|add)\s+(.+)$/.exec(cmd);
  if(ins){const mgr=ins[1].replace("pip3","pip").replace("apt-get","apt");
   ins[2].split(/\s+/).filter(x=>x&&!x.startsWith("-")).forEach(p=>{noteTech(ins[1],p);if(!/[\/=<>]|\.txt$|\.whl$/.test(p))found.push({name:p,kind:"cài đặt / install",ex:p,mgr})})}
+ const cs=/curl\s[^|]*?(https?:\/\/[^\s|"']+)[^|]*\|\s*(?:sudo\s+)?(?:ba|z)?sh\b/.exec(cmd);
+ if(cs){const nm=scriptName(cs[1]);if(nm){noteTech("script",nm);found.push({name:nm,kind:"cài bằng script / script install",ex:nm,mgr:"script"})}}
  const b=baseCmd(cmd);
  if(b&&!TK[b]&&!NIGN.has(b))found.push({name:b,kind:"đã gõ / typed",ex:cmd,mgr:""});
  notePaths(cmd);
  let ch=false,added=false;
  for(const f of found){
   if(NIGNL.includes(f.name))continue;
-  if(f.mgr?(TK[f.name]||hasLib(f.name,f.mgr)):TK[f.name])continue;
+  if(f.mgr?(TK[f.name]||hasLib(f.name,f.mgr==="script"?"":f.mgr)):TK[f.name])continue;
   if(AUTO){autoAdd(f);added=true;continue}
   const o=NEWQ.find(x=>x.base===f.name);
   if(o){o.n++;o.src=cmd}else NEWQ.push({base:f.name,kind:f.kind,ex:f.ex,mgr:f.mgr,src:cmd,n:1});
